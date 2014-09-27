@@ -10,18 +10,23 @@ example:
 public void someMethod(ProgressMonitor monitor) {
 
   monitor.begin(100);
+  monitor.notify("Starting to do some stuff");
   
   try {
     for(int i=0; i < 10; i++) {
-      monitor.notify("Starting " + i +" of 10");
-      // do something that takes time
+      monitor.notify("Doing stuff " + i +" of 10");
+      // do something sensible that takes time
+      Thread.sleep(1000);
       monitor.worked(10);
     }
   }
-  catch(IOException e) {
+  catch(InterruptedException e) {
+    // could be any exception
     e.printStackTrace();
   }
   finally {
+    // regardless what state of progress was when exception happened
+    // we are now done!
     monitor.done();
   }
 }
