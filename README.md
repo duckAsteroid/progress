@@ -8,7 +8,6 @@ example:
 
 ```java
 public void someMethod(ProgressMonitor monitor) {
-
   monitor.begin(100);
   monitor.notify("Starting to do some stuff");
   
