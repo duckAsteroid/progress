@@ -8,4 +8,11 @@
   <artifactId>console</artifactId>
   <name>Java Console Impl</name>
   <description>A Java Console (System.out) implementation of Progress</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>api</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  </dependencies>
 </project>

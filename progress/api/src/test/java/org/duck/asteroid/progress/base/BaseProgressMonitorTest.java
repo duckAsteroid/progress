@@ -61,7 +61,7 @@ public class BaseProgressMonitorTest {
 			assertEquals(0, subject.getWorkDone());
 			assertFalse(subject.isWorkComplete());
 			
-			subTask.worked(3); 
+			subTask.worked(3, "One third"); 
 			// worked 3/10 in subTask
 			assertEquals(10, subTask.getTotalWork());
 			assertEquals(7, subTask.getWorkRemaining());
@@ -83,7 +83,7 @@ public class BaseProgressMonitorTest {
 			assertEquals(0, secondHalf.getWorkDone());
 			assertFalse(secondHalf.isWorkComplete());
 			
-			secondHalf.worked(3); 
+			secondHalf.worked(3, "one third"); 
 			// worked 3/10 in subTask
 			assertEquals(10, secondHalf.getTotalWork());
 			assertEquals(7, secondHalf.getWorkRemaining());

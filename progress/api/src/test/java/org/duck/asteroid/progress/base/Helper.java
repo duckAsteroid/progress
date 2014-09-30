@@ -18,7 +18,7 @@ public class Helper {
 		
 		for(int i = 1; i < 11 ; i++) {
 				
-			subject.worked(1);
+			subject.worked(1, "loop " + i);
 			assertEquals(10, subject.getTotalWork());
 			assertEquals(10 - i, subject.getWorkRemaining());
 			assertEquals(i, subject.getWorkDone());

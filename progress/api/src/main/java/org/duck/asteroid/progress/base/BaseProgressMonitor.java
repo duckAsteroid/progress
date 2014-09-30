@@ -1,91 +1,47 @@
 package org.duck.asteroid.progress.base;
 
-import org.duck.asteroid.progress.ProgressMonitor;
+import java.util.Collections;
+import java.util.List;
 
-public class BaseProgressMonitor implements ProgressMonitor {
+import org.duck.asteroid.progress.ProgressMonitor;
+import org.duck.asteroid.progress.ProgressMonitorListener.EventType;
+/**
+ * A basic implementation of the progress monitor interface.
+ * The major drawback of this implementation is that it tracks but does not report
+ * progress to the user. It may be used in other classes for the {@link #toString()}
+ * form?
+ */
+public class BaseProgressMonitor extends AbstractProgressMonitor implements ProgressMonitor {
 	
-	protected int totalWork = 100;
-	protected int workDone = 0;
+	/** Has cancellation been requested */
 	protected boolean cancelled = false;
 	
+	/**
+	 * Always returns <code>null</code>
+	 */
 	public ProgressMonitor getParent() {
 		return null;
 	}
-
-	public void begin(int total) {
-		this.totalWork = total;
-		this.workDone = 0;
-		updated();
-	}
-
-	public int getTotalWork() {
-		return totalWork;
-	}
-
-	public int getWorkDone() {
-		return workDone;
-	}
-
-	public void setWorkDone(int done) {
-		int worked = done - workDone;
-		if (done > 0) {
-			int work = Math.min(worked, getWorkRemaining());
-			worked(work);
-		}
-	}
-
-	public int getWorkRemaining() {
-		return totalWork - workDone;
-	}
-
-	public void setWorkRemaining(int remaining) {
-		if (remaining >= 0 && remaining <= getTotalWork()) {
-			setWorkDone(totalWork - remaining);
-		}
-	}
-
-	public void done() {
-		worked(getWorkRemaining());
-	}
 	/**
-	 * This is the main work update method.
-	 * Both {@link #setWorkDone(int)} and {@link #setWorkRemaining(int)} call this
+	 * Always returns an empty list.
 	 */
-	public synchronized void worked(int work) {
-		if (work > 0) {
-			workDone += work;
-		}
-		updated();
-	}
-	
-	public boolean isWorkComplete() {
-		return workDone == totalWork; 
-	}
-
-	public double getFractionDone() {
-		return (double)workDone / (double)totalWork;
+	public List<ProgressMonitor> getContext() {
+		return Collections.emptyList();
 	}
 
 	public boolean isCancelled() {
 		return cancelled;
 	}
 
-	public void setCancelled(boolean cancelled) {
+	public synchronized void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
+		notify(EventType.CANCELLED);
 	}
-
-	public ProgressMonitor newSubTask(int work, String taskName) {
-		return new SubTaskProgressMonitor(this, work);
+	/**
+	 * This implementation quietly does nothing!
+	 */
+	@Override
+	protected void logUpdate(AbstractProgressMonitor child) {
+		// no-op
 	}
-	
-	public void notify(String status) {
-		
-	}
-
-	public void updated() {
-		
-	}
-	
-	// TODO implement toString, equals hashCode etc.
-
 }
