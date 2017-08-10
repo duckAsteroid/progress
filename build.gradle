@@ -3,12 +3,11 @@ plugins {
 }
 
 subprojects {
-/* Java basics */
+    /* Java basics */
     apply plugin: 'java'
     group = 'com.asteroid.duck'
     version = '1.0.0'
     description = 'Java progress reporting library'
-
     sourceCompatibility = 1.8
 
     repositories {
@@ -20,7 +19,8 @@ subprojects {
         testCompile 'junit:junit:4.+'
     }
 
-/* Add ability to publish JARs to Maven (e.g. bintray) */
+
+    /* Add ability to publish JARs to Maven (e.g. bintray) */
     apply plugin: 'maven-publish'
     publishing {
         publications {
@@ -30,7 +30,8 @@ subprojects {
         }
     }
 
-/* Configuration to publish from travis to bintray */
+
+    /* Configuration to publish from travis to bintray */
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
@@ -44,5 +45,13 @@ subprojects {
             licenses = ['MIT']
             vcsUrl = 'https://github.com/duckAsteroid/progress.git' // < - EDIT ME
         }
+    }
+}
+
+task bintrayUploadAll {
+    group 'publishing'
+    description 'Call :bintrayUpload on all subprojects'
+    subprojects.each {
+        dependsOn("${it.path}:bintrayUpload")
     }
 }
