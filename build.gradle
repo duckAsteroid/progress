@@ -11,7 +11,7 @@ description = 'Java progress reporting library'
 subprojects {
     /* Java basics */
     apply plugin: 'java'
-    group = 'org.duck.asteroid'
+    group = 'com.asteroid.duck.progress'
     version = '1.0.0'
     sourceCompatibility = 1.8
 
@@ -28,7 +28,7 @@ subprojects {
     apply plugin: 'maven-publish'
     publishing {
         publications {
-            mavenJava(MavenPublication) {
+            maven(MavenPublication) {
                 from components.java
             }
         }
@@ -39,7 +39,6 @@ subprojects {
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
-        publications = ['mavenJava'] // reference above publication
         publish = true // Whether version should be auto published after an upload
         override = true // Whether to override version artifacts already published
         pkg {
