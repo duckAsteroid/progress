@@ -43,7 +43,7 @@ subprojects {
         publish = true // Whether version should be auto published after an upload
         override = true // Whether to override version artifacts already published
         pkg {
-            name = task.project.name
+            name = "${project.name}"
             repo = 'maven'
             userOrg = 'duck-asteroid'
             licenses = ['MIT']
