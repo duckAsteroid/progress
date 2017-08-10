@@ -1,5 +1,6 @@
 progress
 ========
+![build status](https://travis-ci.org/duckAsteroid/progress.svg?branch=master)
 
 A Java library for reporting progress - with console implementationa and bindings for various UI tookits.
 
