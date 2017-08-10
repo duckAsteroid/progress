@@ -6,13 +6,13 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
+description = 'Java progress reporting library'
 
 subprojects {
     /* Java basics */
     apply plugin: 'java'
-    group = 'com.asteroid.duck'
+    group = 'org.duck.asteroid'
     version = '1.0.0'
-    description = 'Java progress reporting library'
     sourceCompatibility = 1.8
 
     repositories {
@@ -43,13 +43,12 @@ subprojects {
         publish = true // Whether version should be auto published after an upload
         override = true // Whether to override version artifacts already published
         pkg {
-            name = 'progress' // < - EDIT ME
+            name = project.name // < - EDIT ME
             repo = 'maven'
             userOrg = 'duck-asteroid'
             licenses = ['MIT']
             vcsUrl = 'https://github.com/duckAsteroid/progress.git' // < - EDIT ME
         }
-
     }
 }
 
