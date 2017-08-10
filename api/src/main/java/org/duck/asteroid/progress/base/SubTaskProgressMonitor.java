@@ -10,11 +10,11 @@ import org.duck.asteroid.progress.ProgressMonitor;
  */
 public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 	/** The context of this monitor */
-	protected ArrayList<ProgressMonitor> context;
+	protected final ArrayList<ProgressMonitor> context;
 	/** parent (supplied in constructor) */
-	protected AbstractProgressMonitor parent;
+	protected final AbstractProgressMonitor parent;
 	/** The total work that this monitor contributes to it's parent when completed */
-	protected int totalParentWork;
+	protected final int totalParentWork;
 	
 	/**
 	 * Create a sub task for a given parent monitor

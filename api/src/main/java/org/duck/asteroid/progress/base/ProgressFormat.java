@@ -8,11 +8,11 @@ public class ProgressFormat {
 	/** A default (everything on) format for monitors */
 	public static final ProgressFormat DEFAULT = new ProgressFormat(true, true, true, true, true);
 	
-	private boolean showTask;
-	private boolean showWork; 
-	private boolean showPercent;
-	private boolean showStatus;
-	private boolean showParents;
+	private final boolean showTask;
+	private final boolean showWork;
+	private final boolean showPercent;
+	private final boolean showStatus;
+	private final boolean showParents;
 	
 	public ProgressFormat(boolean showParents, boolean showTask, boolean showWork,
 			boolean showPercent, boolean showStatus) {

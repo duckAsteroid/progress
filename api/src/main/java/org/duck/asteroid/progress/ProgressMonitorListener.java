@@ -6,7 +6,7 @@ public interface ProgressMonitorListener {
 	/**
 	 * An enumeration of event types this listener is notified of
 	 */
-	public enum EventType {
+	enum EventType {
 		BEGIN, WORK_DONE, COMPLETED, NOTIFICATION, NAME_CHANGED, CANCELLED
 	}
 	/**
@@ -14,5 +14,5 @@ public interface ProgressMonitorListener {
 	 * @param event The type of event that caused the update
 	 * @param source The source monitor that raised the event
 	 */
-	public void progressUpdated(EventType event, ProgressMonitor source);
+	void progressUpdated(EventType event, ProgressMonitor source);
 }

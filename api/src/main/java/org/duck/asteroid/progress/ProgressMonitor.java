@@ -11,29 +11,29 @@ public interface ProgressMonitor {
 	 * 
 	 * @param total the total work in this task 
 	 */
-	public void begin(int total);
+	void begin(int total);
 	/**
 	 * The name of this task (if any)
 	 * @return the task name
 	 */
-	public String getTaskName();
+	String getTaskName();
 	/**
 	 * The last {@link #notify(String) notified} status
 	 * @return the task status
 	 */
-	public String getStatus();
+	String getStatus();
 	/**
 	 * The total amount work that this task entails.
 	 * The default (if not provided in {@link #begin(int, String)} is 100)
 	 * @return The total work. A positive integer
 	 */
-	public int getTotalWork();
+	int getTotalWork();
 	
 	/**
 	 * The work done so far (always less than or equal to {@link #getTotalWork()})
 	 * @return The work done so far. A positive integer.
 	 */
-	public int getWorkDone();
+	int getWorkDone();
 	
 	/**
 	 * Set the absolute work done so far. This can be less than the current {@link #getWorkDone()}.
@@ -42,13 +42,13 @@ public interface ProgressMonitor {
 	 * Attempting to set this value to less than zero will result in {@link #getWorkDone()} == 0. 
 	 * @param done The work done so far.
 	 */
-	public void setWorkDone(int done);
+	void setWorkDone(int done);
 	
 	/**
 	 * The remaining work to be done. Always less than {@link #getTotalWork()}.
 	 * @return The work remaining
 	 */
-	public int getWorkRemaining();
+	int getWorkRemaining();
 	
 	/**
 	 * Set the absolute work remaining. 
@@ -57,7 +57,7 @@ public interface ProgressMonitor {
 	 * Attempts to set the remaining work to be more than the {@link #getTotalWork() total work} are ignored.  
 	 * @param remaining The new amount of work remaining.
 	 */
-	public void setWorkRemaining(int remaining);
+	void setWorkRemaining(int remaining);
 	
 	/**
 	 * Log an amount of work being done. 
@@ -66,42 +66,42 @@ public interface ProgressMonitor {
 	 * @param work The work that has been done.
 	 * @param status A new status message (or null to leave as is)
 	 */
-	public void worked(int work, String status);
+	void worked(int work, String status);
 	
 	/**
 	 * Clients may call this to indicate all work on this task is complete.
 	 * Equivalent to calling <code>progress.setWorkDone(progress.getWorkRemaining())</code>
 	 */
-	public void done();
+	void done();
 	
 	/**
 	 * Is the work reported complete (e.g. does {@link #getWorkDone()} == {@link #getTotalWork()})
 	 * @return true if the work is complete
 	 */
-	public boolean isWorkComplete();
+	boolean isWorkComplete();
 	
 	/**
 	 * Returns the value of {@link #getWorkDone()}/{@link #getTotalWork()} as a double fraction.
 	 * @return The fraction of work done
 	 */
-	public double getFractionDone();
+	double getFractionDone();
 	
 	/**
 	 * Notify users (if possible) of the status of this task.
 	 * @param status The task status notification message
 	 */
-	public void notify(String status);
+	void notify(String status);
 	
 	/**
 	 * Has the task being reported been cancelled.
 	 * @return true if cancelled
 	 */
-	public boolean isCancelled();
+	boolean isCancelled();
 	/**
 	 * Change the cancelled state of the task being monitored
 	 * @param cancelled the new cancelled state
 	 */
-	public void setCancelled(boolean cancelled);
+	void setCancelled(boolean cancelled);
 
 	/**
 	 * Add a sub task to this task. When completed this sub task will contribute the given amount of
@@ -110,26 +110,26 @@ public interface ProgressMonitor {
 	 * @param taskName The name of the task. Or <code>null</code>
 	 * @return A new sub task object
 	 */
-	public ProgressMonitor newSubTask(int work, String taskName);
+	ProgressMonitor newSubTask(int work, String taskName);
 	
 	/**
 	 * The parent of this task (if it is not the root ProgressMonitor)
 	 * @return the parent or <code>null</code> if this is the root {@link ProgressMonitor}
 	 */
-	public ProgressMonitor getParent();
+	ProgressMonitor getParent();
 	/**
 	 * Return a list of the hierarchical context (or path) of progress monitor.
 	 * The first entry is the root {@link ProgressMonitor} and the last is this monitors {@link #getParent() parent}
 	 */
-	public List<ProgressMonitor> getContext();
+	List<ProgressMonitor> getContext();
 	/**
 	 * Add a listener to be notified of future events
 	 * @param listener The new listener
 	 */
-	public void addUpdateListener(ProgressMonitorListener listener);
+	void addUpdateListener(ProgressMonitorListener listener);
 	/**
 	 * Remove a listener to no longer be notified of future events
 	 * @param listener The listener to remove
 	 */
-	public void removeUpdateListener(ProgressMonitorListener listener);
+	void removeUpdateListener(ProgressMonitorListener listener);
 }
