@@ -1,0 +1,48 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+subprojects {
+/* Java basics */
+    apply plugin: 'java'
+    group = 'com.asteroid.duck'
+    version = '1.0.0'
+    description = 'Java progress reporting library'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.+'
+    }
+
+/* Add ability to publish JARs to Maven (e.g. bintray) */
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+/* Configuration to publish from travis to bintray */
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        publications = ['mavenJava'] // reference above publication
+        publish = true // Whether version should be auto published after an upload
+        override = true // Whether to override version artifacts already published
+        pkg {
+            name = 'progress' // < - EDIT ME
+            repo = 'maven'
+            userOrg = 'duck-asteroid'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/duckAsteroid/progress.git' // < - EDIT ME
+        }
+    }
+}
