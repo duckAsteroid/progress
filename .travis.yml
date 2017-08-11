@@ -1,5 +1,9 @@
 language: java
-script: "./gradlew --stacktrace :bintrayUpload"
+script: "./gradlew --stacktrace bintrayUpload"
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 env:
   global:
   - secure: hx5kcW/M+eM+cZrpITmNt9n6QUaZFJF59M2GGEm+peXrXIXLATBMKb6cXq2LotiNEnoy1EXTcbPWQtxFKOcRISXcV+BjFQdNYpfTHRI9rR3imsQ2xpwWwYM9il/u4CJ5ZMsM2V5Bjp0CyK+btuYykhD065f9mffEm4JnUOvD15OWErzsZug461RuhGQ6A+e/HuKlM3Qwq9hkKJu8qAeqFhQeEiFwkrS7gMZIoLGFolYq/cqhwsH0yDwdsBiuqcxFx0PnmjlRCEkIu6bgfFJOsMnB7hPcMKxV1/41Zf25sQLUtR4ycGkgrhIxBwh4oL/AThpA/e389BSz/+Kwf6eb1r4DUAHI+osRYTLrYsL3BLRVoJKyTfF/93QiEsoZ6bDcPtoub4R9wJEmmNcjmFAiX+H9fHeeAs8Vx04LbEdIShZKWidhBUB1S+AXmdXlrS2oLeh1om1j0g7A2rrhSi47YWeiquDWzSnKs+x/XhZUgjVF9fMYu3Whe1EleJQjhK/FVELherKmy8AZz4LcYsxI2cNO0BHED0qAnLchx2nvwZP+SZtGPpU6D1/Q3RyQrFzpngC6Xj3MmF1Y3ZGSAqrJhRAJ8FsMoGlOftw18Idzj9bCondNptcwjgWeHuiwH2Gxh7Fhq1TsmT/LGqLyxc1l56CliLZBzM7JeUWglKnamNY=
