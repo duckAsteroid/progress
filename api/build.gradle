@@ -1,14 +1,1 @@
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publish = true // Whether version should be auto published after an upload
-    override = true // Whether to override version artifacts already published
-    publications = ['maven']
-    pkg {
-        repo = 'maven'
-        userOrg = 'duck-asteroid'
-        name = project.name
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/duckAsteroid/progress.git'
-    }
-}
+description = 'API for progress reporting'

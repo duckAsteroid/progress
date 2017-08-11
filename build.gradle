@@ -1,18 +1,17 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
+plugins {
+    id 'com.jfrog.bintray' version '1.7'
 }
 description = 'Java progress reporting library'
+
+allprojects {
+    group = 'com.asteroid.duck.progress'
+    version = '1.0.0'
+}
 
 subprojects {
     /* Java basics */
     apply plugin: 'java'
-    group = 'com.asteroid.duck.progress'
-    version = '1.0.0'
+
     sourceCompatibility = 1.8
 
     repositories {
@@ -30,12 +29,28 @@ subprojects {
         publications {
             maven(MavenPublication) {
                 from components.java
+                group = project.group
+                version = project.version
             }
         }
     }
 
     /* Configuration to publish from travis to bintray */
     apply plugin: 'com.jfrog.bintray'
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        pkg {
+            repo = 'maven'
+            userOrg = 'duck-asteroid'
+            name = project.name
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/duckAsteroid/progress.git'
+        }
+        publish = true // Whether version should be auto published after an upload
+        override = true // Whether to override version artifacts already published
+        publications = ['maven']
+    }
 }
 
 
