@@ -51,12 +51,3 @@ subprojects {
     }
 }
 
-task bintrayUploadAll {
-    group 'publishing'
-    description 'Call :bintrayUpload on all subprojects'
-    subprojects.each {
-        if (it.plugins.withType(com.jfrog.bintray.gradle.BintrayPlugin)) {
-            dependsOn("${it.path}:bintrayUpload")
-        }
-    }
-}
