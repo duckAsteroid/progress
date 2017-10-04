@@ -4,16 +4,27 @@ import java.util.List;
 
 /**
  * The interface to an object an application can use to report work on a task.
+ * A task only has a fractional completion state (0 - 1) represented as a double.
  */
-public interface ProgressMonitor {	
+public interface ProgressMonitor {
 	/**
-	 * Begin this task and set the {{@link #getTotalWork() total amount work} that this task entails.
-	 * 
-	 * @param total the total work in this task 
+	 * The fraction of work done nominally in the range zero (not started) to one (done).
+	 * NOTE: the fraction done may be more than one, it is best to use {@link #isWorkComplete}
+	 * @return The fraction of work done as a double
 	 */
-	void begin(int total);
+	double getFractionDone();
+
 	/**
-	 * The name of this task (if any)
+	 * Modify the fraction of work done. Typically in the bounds zero (not started) to one (done).
+	 * This will generate a
+	 * If this modification causes {@link #isWorkComplete()} to be true a
+	 * {@link ProgressMonitorListener.EventType#COMPLETED} event is fired
+	 * @param fractionDone the new fraction
+	 */
+	void setFractionDone(double fractionDone);
+
+	/**
+	 * The name of this task set by the {@link #getParent() parent} (if any)
 	 * @return the task name
 	 */
 	String getTaskName();
@@ -23,74 +34,22 @@ public interface ProgressMonitor {
 	 */
 	String getStatus();
 	/**
-	 * The total amount work that this task entails.
-	 * The default (if not provided in {@link #begin(int, String)} is 100)
-	 * @return The total work. A positive integer
-	 */
-	int getTotalWork();
-	
-	/**
-	 * The work done so far (always less than or equal to {@link #getTotalWork()})
-	 * @return The work done so far. A positive integer.
-	 */
-	int getWorkDone();
-	
-	/**
-	 * Set the absolute work done so far. This can be less than the current {@link #getWorkDone()}.
-	 * Attempting to set this value larger than {@link #getTotalWork()} will result 
-	 * in {@link #getWorkDone()} == {@link #getTotalWork()}.
-	 * Attempting to set this value to less than zero will result in {@link #getWorkDone()} == 0. 
-	 * @param done The work done so far.
-	 */
-	void setWorkDone(int done);
-	
-	/**
-	 * The remaining work to be done. Always less than {@link #getTotalWork()}.
-	 * @return The work remaining
-	 */
-	int getWorkRemaining();
-	
-	/**
-	 * Set the absolute work remaining. 
-	 * Attempts to set the new remaining value more than the {@link #getWorkRemaining() current remaining value}, are ignored.
-	 * Attempts to set the remaining work negative are ignored.
-	 * Attempts to set the remaining work to be more than the {@link #getTotalWork() total work} are ignored.  
-	 * @param remaining The new amount of work remaining.
-	 */
-	void setWorkRemaining(int remaining);
-	
-	/**
-	 * Log an amount of work being done. 
-	 * Negative work values, or work values that take the {@link #getWorkDone() work done} so far
-	 * beyond the {{@link #getTotalWork() total work} are ignored. 
-	 * @param work The work that has been done.
-	 * @param status A new status message (or null to leave as is)
-	 */
-	void worked(int work, String status);
-	
-	/**
-	 * Clients may call this to indicate all work on this task is complete.
-	 * Equivalent to calling <code>progress.setWorkDone(progress.getWorkRemaining())</code>
-	 */
-	void done();
-	
-	/**
-	 * Is the work reported complete (e.g. does {@link #getWorkDone()} == {@link #getTotalWork()})
-	 * @return true if the work is complete
-	 */
-	boolean isWorkComplete();
-	
-	/**
-	 * Returns the value of {@link #getWorkDone()}/{@link #getTotalWork()} as a double fraction.
-	 * @return The fraction of work done
-	 */
-	double getFractionDone();
-	
-	/**
-	 * Notify users (if possible) of the status of this task.
+	 * Notify users (if possible) of the status of this task (without changing the fraction done).
+	 * This will generate a
 	 * @param status The task status notification message
 	 */
 	void notify(String status);
+	
+	/**
+	 * Is the work reported complete (e.g. is {@link #getFractionDone()} more than or equal to one)
+	 * @return true if the work is complete
+	 */
+	boolean isWorkComplete();
+	/**
+	 * Clients may call this to indicate all work on this task is complete.
+	 * Equivalent to calling {@link #setFractionDone(double)} with a value more than or equal to one.
+	 */
+	void done();
 	
 	/**
 	 * Has the task being reported been cancelled.
@@ -104,13 +63,32 @@ public interface ProgressMonitor {
 	void setCancelled(boolean cancelled);
 
 	/**
+	 * Create an fractional integer based projection of progress on this monitor - tracking progress up to the given
+	 * total (denominator).
+	 * The returned delegate simply calls {@link #setFractionDone(double)} on this instance.
+	 * It is not recommended to create more than one {@link FractionalProgress} for any given {@link ProgressMonitor}.
+	 * Over reporting of progress will result
+	 * @param total the total work in this task
+	 */
+	FractionalProgress<Integer> asInteger(int total);
+	/**
+	 * Create an fractional {@link Long} based projection of progress on this monitor - tracking progress up to the given
+	 * total (denominator).
+	 * The returned delegate simply calls {@link #setFractionDone(double)} on this instance.
+	 * It is not recommended to create more than one {@link FractionalProgress} for any given {@link ProgressMonitor}.
+	 * Over reporting of progress will result
+	 * @param total the total work in this task
+	 */
+	FractionalProgress<Long> asLong(long total);
+
+	/**
 	 * Add a sub task to this task. When completed this sub task will contribute the given amount of
 	 * work to this task.
-	 * @param work The amount of work the sub task will cover from this task
+	 * @param work The amount of work the sub task will contribute to this monitor
 	 * @param taskName The name of the task. Or <code>null</code>
 	 * @return A new sub task object
 	 */
-	ProgressMonitor newSubTask(int work, String taskName);
+	ProgressMonitor split(double work, String taskName);
 	
 	/**
 	 * The parent of this task (if it is not the root ProgressMonitor)
@@ -122,14 +100,4 @@ public interface ProgressMonitor {
 	 * The first entry is the root {@link ProgressMonitor} and the last is this monitors {@link #getParent() parent}
 	 */
 	List<ProgressMonitor> getContext();
-	/**
-	 * Add a listener to be notified of future events
-	 * @param listener The new listener
-	 */
-	void addUpdateListener(ProgressMonitorListener listener);
-	/**
-	 * Remove a listener to no longer be notified of future events
-	 * @param listener The listener to remove
-	 */
-	void removeUpdateListener(ProgressMonitorListener listener);
 }

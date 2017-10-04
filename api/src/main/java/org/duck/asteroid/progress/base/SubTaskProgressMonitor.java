@@ -8,13 +8,13 @@ import org.duck.asteroid.progress.ProgressMonitor;
 /**
  * A sub task progress monitor. Tracks progress and updates the parent of work done
  */
-public class SubTaskProgressMonitor extends AbstractProgressMonitor {
+public class SubTaskProgressMonitor extends BaseProgressMonitor {
 	/** The context of this monitor */
 	protected final ArrayList<ProgressMonitor> context;
 	/** parent (supplied in constructor) */
 	protected final AbstractProgressMonitor parent;
-	/** The total work that this monitor contributes to it's parent when completed */
-	protected final int totalParentWork;
+	/** The total (fractional) work that this monitor contributes to it's parent when completed */
+	protected final double totalParentWork;
 	
 	/**
 	 * Create a sub task for a given parent monitor
@@ -22,7 +22,8 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 	 * @param totalParentWork The total work in the parent that this complete task represents
 	 * @param name The name of this task
 	 */
-	public SubTaskProgressMonitor(AbstractProgressMonitor parent, int totalParentWork, String name) {
+	public SubTaskProgressMonitor(AbstractProgressMonitor parent, final double totalParentWork, final String name) {
+		super(name);
 		if (parent == null) { 
 			throw new IllegalArgumentException("Parent cannot be null");
 		}
@@ -35,38 +36,39 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 		// calculate this monitors context
 		this.context = new ArrayList<ProgressMonitor>(parent.getContext());
 		this.context.add(parent);
-		
-		this.taskName = name;
+
 	}
 
+	@Override
+	public void setFractionDone(double fractionDone) {
+		// update our own internal work fraction 0 - 1
+		super.setFractionDone(fractionDone);
+		// and update the parent
+		parent.setFractionDone(totalParentWork * fractionDone);
+	}
+
+	@Override
 	public ProgressMonitor getParent() {
 		return parent;
 	}
-	
+
+	@Override
 	public List<ProgressMonitor> getContext() {
 		return context;
 	}
 
+	@Override
 	public boolean isCancelled() {
 		return parent.isCancelled();
 	}
 
+	@Override
 	public void setCancelled(boolean cancelled) {
 		parent.setCancelled(cancelled);
 	}
-	
-	@Override
-	public void worked(int work, String status) {
-		// track local work
-		super.worked(work, status);
-		// calculate equivalent parent work
-		int parentWork = (int)(((double) work / (double)totalWork) * totalParentWork);
-		// update parent work
-		parent.worked(parentWork, null);
-	}
 
 	@Override
-	protected void logUpdate(AbstractProgressMonitor child) {
-		parent.logUpdate(child);
+	public void logUpdate(ProgressMonitor source) {
+		parent.logUpdate(this);
 	}
 }
