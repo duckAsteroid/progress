@@ -1,135 +1,136 @@
 package org.duck.asteroid.progress.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import org.duck.asteroid.progress.FractionalProgress;
 import org.duck.asteroid.progress.ProgressMonitor;
+
+import static org.junit.Assert.*;
 
 public class Helper {
 	
 	public static void testNormalSimpleFlow(ProgressMonitor subject) {
-		subject.begin(10);
+		FractionalProgress<Integer> fraction = subject.asInteger(10);
 		
-		assertEquals(10, subject.getTotalWork());
-		assertEquals(10, subject.getWorkRemaining());
-		assertEquals(0, subject.getWorkDone());
+		assertEquals(10, (int)fraction.getTotalWork());
+		assertEquals(10, (int)fraction.getWorkRemaining());
+		assertEquals(0, (int)fraction.getWorkDone());
 		assertFalse(subject.isWorkComplete());
+		assertFalse(fraction.isWorkComplete());
 		
 		for(int i = 1; i < 11 ; i++) {
 				
-			subject.worked(1, "loop " + i);
-			assertEquals(10, subject.getTotalWork());
-			assertEquals(10 - i, subject.getWorkRemaining());
-			assertEquals(i, subject.getWorkDone());
+			fraction.worked(1, "loop " + i);
+			assertEquals(10, (int)fraction.getTotalWork());
+			assertEquals(10 - i, (int)fraction.getWorkRemaining());
+			assertEquals(i, (int)fraction.getWorkDone());
 		}
 		
-		assertEquals(10, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(10, subject.getWorkDone());
+		assertEquals(10, (int)fraction.getTotalWork());
+		assertEquals(0, (int)fraction.getWorkRemaining());
+		assertEquals(10, (int)fraction.getWorkDone());
+		assertTrue(fraction.isWorkComplete());
 		assertTrue(subject.isWorkComplete());
 	}
 	
-	public static void testFlowUsingSetWorkDone(ProgressMonitor subject) {
-		subject.begin(3);
+	public static void testFlowUsingSetWorkDone(ProgressMonitor pm) {
+		FractionalProgress<Integer> fraction = pm.asInteger(3);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(3, subject.getWorkRemaining());
-		assertEquals(0, subject.getWorkDone());
-		assertFalse(subject.isWorkComplete());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(3, (int)fraction.getWorkRemaining());
+		assertEquals(0, (int)fraction.getWorkDone());
+		assertFalse(fraction.isWorkComplete());
+
+		fraction.setWorkDone(2);
 		
-		subject.setWorkDone(2);
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(1, (int)fraction.getWorkRemaining());
+		assertEquals(2, (int)fraction.getWorkDone());
+		assertFalse(fraction.isWorkComplete());
+
+		fraction.setWorkDone(1);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
-		assertFalse(subject.isWorkComplete());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(2, (int)fraction.getWorkRemaining());
+		assertEquals(1, (int)fraction.getWorkDone());
+		assertFalse(fraction.isWorkComplete());
+
+		fraction.setWorkDone(0);
 		
-		subject.setWorkDone(1);
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(3, (int)fraction.getWorkRemaining());
+		assertEquals(0, (int)fraction.getWorkDone());
+		assertFalse(fraction.isWorkComplete());
+
+		fraction.setWorkDone(3);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
-		assertFalse(subject.isWorkComplete());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(0, (int)fraction.getWorkRemaining());
+		assertEquals(3, (int)fraction.getWorkDone());
+		assertTrue(fraction.isWorkComplete());
+
+		fraction.setWorkDone(5);
 		
-		subject.setWorkDone(0);
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(-2, (int)fraction.getWorkRemaining());
+		assertEquals(5, (int)fraction.getWorkDone());
+		assertTrue(fraction.isWorkComplete());
+
+		fraction.setWorkDone(-5);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
-		assertFalse(subject.isWorkComplete());
-		
-		subject.setWorkDone(3);
-		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
-		assertTrue(subject.isWorkComplete());
-		
-		subject.setWorkDone(5);
-		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
-		assertTrue(subject.isWorkComplete());
-		
-		subject.setWorkDone(-5);
-		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
-		assertTrue(subject.isWorkComplete());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(8, (int)fraction.getWorkRemaining());
+		assertEquals(-5, (int)fraction.getWorkDone());
+		assertFalse(fraction.isWorkComplete());
 		
 	}
 	
 	public static void testFlowUsingSetWorkRemaining(ProgressMonitor subject) {
-		subject.begin(3);
+		FractionalProgress<Integer> fraction = subject.asInteger(3);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(3, subject.getWorkRemaining());
-		assertEquals(0, subject.getWorkDone());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(3, (int)fraction.getWorkRemaining());
+		assertEquals(0, (int)fraction.getWorkDone());
 		assertFalse(subject.isWorkComplete());
 		
-		subject.setWorkRemaining(1);
+		fraction.setWorkRemaining(1);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(1, (int)fraction.getWorkRemaining());
+		assertEquals(2, (int)fraction.getWorkDone());
 		assertFalse(subject.isWorkComplete());
+
+		fraction.setWorkRemaining(-5);
 		
-		subject.setWorkRemaining(-5);
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(-5, (int)fraction.getWorkRemaining());
+		assertEquals(8, (int)fraction.getWorkDone());
+		assertTrue(subject.isWorkComplete());
+
+		fraction.setWorkRemaining(3);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(3, (int)fraction.getWorkRemaining());
+		assertEquals(0, (int)fraction.getWorkDone());
 		assertFalse(subject.isWorkComplete());
-		
-		subject.setWorkRemaining(3);
-		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(1, subject.getWorkRemaining());
-		assertEquals(2, subject.getWorkDone());
-		assertFalse(subject.isWorkComplete());
-		
-		subject.setWorkRemaining(0);
+
+		fraction.setWorkRemaining(0);
 				
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(0, (int)fraction.getWorkRemaining());
+		assertEquals(3, (int)fraction.getWorkDone());
 		assertTrue(subject.isWorkComplete());
+
+		fraction.setWorkRemaining(5);
 		
-		subject.setWorkRemaining(5);
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(5, (int)fraction.getWorkRemaining());
+		assertEquals(-2, (int)fraction.getWorkDone());
+		assertFalse(subject.isWorkComplete());
+
+		fraction.setWorkRemaining(-5);
 		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
-		assertTrue(subject.isWorkComplete());
-		
-		subject.setWorkRemaining(-5);
-		
-		assertEquals(3, subject.getTotalWork());
-		assertEquals(0, subject.getWorkRemaining());
-		assertEquals(3, subject.getWorkDone());
+		assertEquals(3, (int)fraction.getTotalWork());
+		assertEquals(-5, (int)fraction.getWorkRemaining());
+		assertEquals(8, (int)fraction.getWorkDone());
 		assertTrue(subject.isWorkComplete());
 		
 	}

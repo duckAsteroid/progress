@@ -9,15 +9,15 @@ example:
 
 ```java
 public void someMethod(ProgressMonitor monitor) {
-  monitor.begin(100);
-  monitor.notify("Starting to do some stuff");
+  FractionalProgressMonitor<Integer> fraction = monitor.asInteger(100);
+  fraction.notify("Starting to do some stuff");
   
   try {
     for(int i=0; i < 10; i++) {
-      monitor.notify("Doing stuff " + i +" of 10");
+      fraction.notify("Doing stuff " + i +" of 10");
       // do something sensible that takes time
       Thread.sleep(1000);
-      monitor.worked(10);
+      fraction.worked(10);
     }
   }
   catch(InterruptedException e) {

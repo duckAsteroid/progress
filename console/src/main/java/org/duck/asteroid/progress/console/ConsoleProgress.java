@@ -1,10 +1,10 @@
 package org.duck.asteroid.progress.console;
 
-import java.io.PrintStream;
-
-import org.duck.asteroid.progress.base.AbstractProgressMonitor;
+import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.BaseProgressMonitor;
-import org.duck.asteroid.progress.base.ProgressFormat;
+import org.duck.asteroid.progress.base.format.ProgressFormat;
+
+import java.io.PrintStream;
 
 /**
  * A simple progress monitor that writes all progress to the console
@@ -23,7 +23,7 @@ public class ConsoleProgress extends BaseProgressMonitor {
 	}
 
 	@Override
-	protected void logUpdate(AbstractProgressMonitor child) {
-		output.println(formatter.format(child));
+	public void logUpdate(ProgressMonitor source) {
+		output.println(formatter.format(source));
 	}
 }

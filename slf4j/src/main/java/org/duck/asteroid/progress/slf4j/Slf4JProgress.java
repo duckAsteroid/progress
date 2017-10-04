@@ -1,8 +1,9 @@
 package org.duck.asteroid.progress.slf4j;
 
+import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.AbstractProgressMonitor;
 import org.duck.asteroid.progress.base.BaseProgressMonitor;
-import org.duck.asteroid.progress.base.ProgressFormat;
+import org.duck.asteroid.progress.base.format.ProgressFormat;
 import org.slf4j.Logger;
 
 /**
@@ -65,7 +66,7 @@ public class Slf4JProgress extends BaseProgressMonitor {
     }
 
     @Override
-    protected void logUpdate(final AbstractProgressMonitor child) {
+    public void logUpdate(final ProgressMonitor child) {
         String format = this.format.format(child);
         level.write(logger, format);
     }
