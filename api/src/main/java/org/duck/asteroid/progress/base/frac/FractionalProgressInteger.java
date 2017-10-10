@@ -27,7 +27,7 @@ public class FractionalProgressInteger extends AbstractFractionalProgress<Intege
     @Override
     public void setWorkDone(Integer done) {
         work.set(done);
-        super.updateDelegate(done);
+        super.setFractionDone(done.doubleValue() / total.doubleValue());
     }
 
     @Override
@@ -47,6 +47,7 @@ public class FractionalProgressInteger extends AbstractFractionalProgress<Intege
 
     @Override
     public void worked(Integer amount, String status) {
+        double fractionWorkAmount = (double) amount / total.doubleValue();
         boolean updated;
         int targetWorked;
         do {
@@ -60,9 +61,15 @@ public class FractionalProgressInteger extends AbstractFractionalProgress<Intege
             notify(status);
         }
         // notify delegate of new work
-        super.updateDelegate(targetWorked);
+        super.fractionWorked(fractionWorkAmount);
     }
 
+    @Override
+    public void done() {
+        work.set(total);
+        // notify delegate of new work
+        super.setFractionDone(1.0);
+    }
 
     @Override
     public void setFractionDoneInternal(double fractionDone, AbstractProgressMonitor ignored) {

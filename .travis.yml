@@ -1,5 +1,5 @@
 language: java
-script: "./gradlew --stacktrace bintrayUpload"
+script: "./gradlew --stacktrace sonarqube -Dsonar.organization=duckasteroid-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=913dc2f41588fe61c36d6641cb510b9cded7cb90"
 cache:
   directories:
   - "$HOME/.gradle/caches/"

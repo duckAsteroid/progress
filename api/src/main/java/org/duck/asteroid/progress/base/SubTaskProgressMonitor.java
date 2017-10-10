@@ -44,7 +44,19 @@ public class SubTaskProgressMonitor extends BaseProgressMonitor {
 		// update our own internal work fraction 0 - 1
 		super.setFractionDone(fractionDone);
 		// and update the parent
-		parent.setFractionDone(totalParentWork * fractionDone);
+		parent.fractionWorked(totalParentWork * fractionDone);
+	}
+
+	@Override
+	public void fractionWorked(double amount) {
+		super.fractionWorked(amount); // update our internal work done...
+		parent.fractionWorked(totalParentWork * amount);
+	}
+
+	@Override
+	public void done() {
+		double remainder = super.internalDone(); // update our internal state
+		fractionWorked(remainder);
 	}
 
 	@Override

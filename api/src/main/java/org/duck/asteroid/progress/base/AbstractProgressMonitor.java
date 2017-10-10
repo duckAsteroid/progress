@@ -6,6 +6,7 @@ import org.duck.asteroid.progress.base.format.ProgressFormat;
 import org.duck.asteroid.progress.base.frac.AbstractFractionalProgress;
 import org.duck.asteroid.progress.base.frac.FractionalProgressInteger;
 import org.duck.asteroid.progress.base.frac.FractionalProgressLong;
+import org.duck.asteroid.progress.base.frac.ZeroFraction;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -53,6 +54,9 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
 	@Override
 	public FractionalProgress<Integer> asInteger(int total) {
+		if (total == 0) {
+			return new ZeroFraction<>(this, 0);
+		}
 		FractionalProgressInteger progressInteger = new FractionalProgressInteger(this, total);
 		projections.add(progressInteger);
 		return progressInteger;
@@ -60,6 +64,9 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
 	@Override
 	public FractionalProgress<Long> asLong(long total) {
+		if (total == 0) {
+			return new ZeroFraction<>(this, 0L);
+		}
 		FractionalProgressLong progressLong = new FractionalProgressLong(this, total);
 		projections.add(progressLong);
 		return progressLong;

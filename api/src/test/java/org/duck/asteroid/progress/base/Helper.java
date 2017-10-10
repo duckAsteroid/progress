@@ -9,26 +9,17 @@ public class Helper {
 	
 	public static void testNormalSimpleFlow(ProgressMonitor subject) {
 		FractionalProgress<Integer> fraction = subject.asInteger(10);
-		
-		assertEquals(10, (int)fraction.getTotalWork());
-		assertEquals(10, (int)fraction.getWorkRemaining());
-		assertEquals(0, (int)fraction.getWorkDone());
-		assertFalse(subject.isWorkComplete());
-		assertFalse(fraction.isWorkComplete());
+		FractionAssert<Integer> assertion = FractionAssert.on(fraction);
+
+		assertion.expectedWorkDone(0).check();
 		
 		for(int i = 1; i < 11 ; i++) {
-				
 			fraction.worked(1, "loop " + i);
-			assertEquals(10, (int)fraction.getTotalWork());
-			assertEquals(10 - i, (int)fraction.getWorkRemaining());
-			assertEquals(i, (int)fraction.getWorkDone());
+
+			assertion.expectedWorkDone(i);
 		}
 		
-		assertEquals(10, (int)fraction.getTotalWork());
-		assertEquals(0, (int)fraction.getWorkRemaining());
-		assertEquals(10, (int)fraction.getWorkDone());
-		assertTrue(fraction.isWorkComplete());
-		assertTrue(subject.isWorkComplete());
+		assertion.expectedWorkDone(10);
 	}
 	
 	public static void testFlowUsingSetWorkDone(ProgressMonitor pm) {

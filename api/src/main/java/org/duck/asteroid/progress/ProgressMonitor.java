@@ -18,7 +18,6 @@ public interface ProgressMonitor {
 	 * Modify the fraction of work done. Typically in the bounds zero (not started) to one (done).
 	 * This will generate a
 	 * If this modification causes {@link #isWorkComplete()} to be true a
-	 * {@link ProgressMonitorListener.EventType#COMPLETED} event is fired
 	 * @param fractionDone the new fraction
 	 */
 	void setFractionDone(double fractionDone);
@@ -82,8 +81,12 @@ public interface ProgressMonitor {
 	FractionalProgress<Long> asLong(long total);
 
 	/**
-	 * Add a sub task to this task. When completed this sub task will contribute the given amount of
-	 * work to this task.
+	 * Create a monitor that represents some subset of this monitor. In other words when the newly created monitor is
+	 * 100% complete (1.0) - it will contribute the given amount of work to this progress.
+	 *
+	 * Work on the newly created subtask is propagated instantly to this monitor (the parent); however
+	 * changes on this progress directly are not propagated to the subtask. For example if the split sub task represents
+	 * 0.5
 	 * @param work The amount of work the sub task will contribute to this monitor
 	 * @param taskName The name of the task. Or <code>null</code>
 	 * @return A new sub task object
@@ -100,4 +103,10 @@ public interface ProgressMonitor {
 	 * The first entry is the root {@link ProgressMonitor} and the last is this monitors {@link #getParent() parent}
 	 */
 	List<ProgressMonitor> getContext();
+
+    /**
+     * Add a fractional amount of work to the overall progress.
+     * @param amount the fractional amount of work done (this is added to the current work)
+     */
+    void fractionWorked(double amount);
 }

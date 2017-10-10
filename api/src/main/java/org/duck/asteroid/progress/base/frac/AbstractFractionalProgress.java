@@ -10,23 +10,23 @@ import java.util.List;
 
 /**
  * A base class for fractional progress monitors - delegates all the {@link ProgressMonitor} methods
- * to a delegate. Leaving the subclasses to implement just {@link org.duck.asteroid.progress.FractionalProgress}.
- * Fraction calculations (as double) against the total (and subsequent call to delegate) is implemented here
- * and is also routed to the delegate.
+ * to a base. Leaving the subclasses to implement just {@link org.duck.asteroid.progress.FractionalProgress}.
+ * Fraction calculations (as double) against the total (and subsequent call to base) is implemented here
+ * and is also routed to the base.
  */
 public abstract class AbstractFractionalProgress<T extends Number> extends AbstractProgressMonitor implements FractionalProgress<T> {
-    /** The delegate progress monitor - all methods routed here */
-    private final AbstractProgressMonitor delegate;
+    /** The base progress monitor - all methods routed here */
+    private final AbstractProgressMonitor base;
     /** The total (denominator) amount of fractional progress */
     protected final T total;
-
+    /** Tracks the relation between this and base (so this both appear in sub tasks) */
     protected final List<ProgressMonitor> context;
 
-    public AbstractFractionalProgress(AbstractProgressMonitor delegate, T total) {
-        this.delegate = delegate;
+    public AbstractFractionalProgress(AbstractProgressMonitor base, T total) {
+        this.base = base;
         this.total = total;
-        this.context = new ArrayList<>(delegate.getContext());
-        context.add(delegate);
+        this.context = new ArrayList<>(base.getContext());
+        context.add(base);
     }
 
     @Override
@@ -34,46 +34,39 @@ public abstract class AbstractFractionalProgress<T extends Number> extends Abstr
         return total;
     }
 
-    protected void updateDelegate(Number newWork) {
-        // work out the fraction
-        double fraction = newWork.doubleValue() / total.doubleValue();
-        // tell the delegate
-        delegate.setFractionDone(fraction);
-    }
-
     @Override
     public double getFractionDone() {
-        return delegate.getFractionDone();
+        return base.getFractionDone();
     }
 
     @Override
     public void setFractionDone(double fractionDone) {
-        delegate.setFractionDone(fractionDone);
+        base.setFractionDone(fractionDone);
+    }
+
+    @Override
+    public void fractionWorked(double amount) {
+        base.fractionWorked(amount);
     }
 
     @Override
     public boolean isWorkComplete() {
-        return delegate.isWorkComplete();
-    }
-
-    @Override
-    public void done() {
-        delegate.done();
+        return base.isWorkComplete();
     }
 
     @Override
     public boolean isCancelled() {
-        return delegate.isCancelled();
+        return base.isCancelled();
     }
 
     @Override
     public void setCancelled(boolean cancelled) {
-        delegate.setCancelled(cancelled);
+        base.setCancelled(cancelled);
     }
 
     @Override
     public ProgressMonitor getParent() {
-        return delegate;
+        return base;
     }
 
     @Override
@@ -89,6 +82,6 @@ public abstract class AbstractFractionalProgress<T extends Number> extends Abstr
 
     @Override
     public void logUpdate(ProgressMonitor source) {
-        delegate.logUpdate(source);
+        base.logUpdate(source);
     }
 }

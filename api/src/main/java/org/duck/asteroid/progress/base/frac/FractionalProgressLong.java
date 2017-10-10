@@ -27,7 +27,7 @@ public class FractionalProgressLong extends AbstractFractionalProgress<Long> imp
     @Override
     public void setWorkDone(Long done) {
         work.set(done);
-        super.updateDelegate(done);
+        super.setFractionDone(done.doubleValue() / total.doubleValue());
     }
 
     @Override
@@ -60,8 +60,16 @@ public class FractionalProgressLong extends AbstractFractionalProgress<Long> imp
             notify(status);
         }
         // notify delegate of new work
-        super.updateDelegate(targetWorked);
+        super.fractionWorked(amount.doubleValue() /  total.doubleValue());
     }
+
+    @Override
+    public void done() {
+        work.set(total);
+        // notify delegate of new work
+        super.setFractionDone(1.0);
+    }
+
 
     @Override
     public void setFractionDoneInternal(double fractionDone,  AbstractProgressMonitor ignored) {

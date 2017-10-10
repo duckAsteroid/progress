@@ -59,6 +59,23 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 	}
 
 	@Override
+	public void fractionWorked(double amount) {
+		boolean updated;
+		double targetWorked;
+		do {
+			double worked = Double.longBitsToDouble(workDoneFraction.get());
+			targetWorked = worked + amount;
+			// if someone updated work while we were computing the new value - try again...
+			updated = workDoneFraction.compareAndSet(Double.doubleToLongBits(worked), Double.doubleToLongBits(targetWorked));
+		} while(!updated);
+		for (AbstractFractionalProgress<?> projection : projections) {
+			projection.setFractionDoneInternal(targetWorked, null);
+		}
+		logUpdate(this);
+
+	}
+
+	@Override
 	public boolean isWorkComplete() {
 		return Double.longBitsToDouble(workDoneFraction.get()) >= DONE;
 	}
@@ -66,6 +83,20 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 	@Override
 	public void done() {
 		setFractionDone(DONE);
+	}
+
+    /**
+     * Used by subclasses that need to know what the remainder was before done was called
+     */
+	public double internalDone() {
+		boolean updated;
+		double remaining;
+		do {
+			final double work = Double.longBitsToDouble(workDoneFraction.get());
+			remaining = DONE - work;
+			updated = workDoneFraction.compareAndSet(Double.doubleToLongBits(work), Double.doubleToLongBits(DONE));
+		} while (!updated);
+		return remaining;
 	}
 
 	/**
