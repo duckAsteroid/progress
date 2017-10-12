@@ -49,6 +49,7 @@ public abstract class AbstractFractionalProgress<T extends Number> extends Abstr
         base.fractionWorked(amount);
     }
 
+
     @Override
     public boolean isWorkComplete() {
         return base.isWorkComplete();

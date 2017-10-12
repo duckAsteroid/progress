@@ -60,6 +60,12 @@ public class SubTaskProgressMonitor extends BaseProgressMonitor {
 	}
 
 	@Override
+	public ProgressMonitor split(double work, String taskName) {
+		SubTaskProgressMonitor subTask = new SubTaskProgressMonitor(parent, work, taskName);
+		return subTask;
+	}
+
+	@Override
 	public ProgressMonitor getParent() {
 		return parent;
 	}

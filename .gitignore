@@ -12,6 +12,7 @@
 hs_err_pid*
 .metadata/
 .settings/
+.idea/
 
 # Gradle
 /.gradle/

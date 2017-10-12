@@ -1,6 +1,7 @@
 package org.duck.asteroid.progress.base;
 
 import org.duck.asteroid.progress.FractionalProgress;
+import org.duck.asteroid.progress.ProgressMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -189,4 +190,39 @@ public class FractionalProgressTest {
     /**
      * Concurrency test with sub tasks
      */
+    @Test
+    public void concurrentSubTaskTest() throws ExecutionException, InterruptedException {
+        final long MASTER_WORK = 10000;
+        FractionalProgress<Long> fractionalProgress = subject.asLong(NUM_THREADS);
+
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        ArrayList<Future<?>> futures = new ArrayList<>();
+        // simple fractionWorked updated from multiple threads
+        for(int i = 0; i < NUM_THREADS; i ++) {
+            Future<?> future = executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    FractionalProgress<Long> split = fractionalProgress
+                            .newSubTask(1L, Thread.currentThread().getName())
+                            .asLong(NUM_STEPS);
+                    for (int k = 0; k < NUM_STEPS; k++) {
+                        split.worked(1L);
+                        System.out.println("split="+split);
+                    }
+                    System.out.println(Thread.currentThread().getName() + " DONE @ "+ fractionalProgress);
+                    split.done();
+                    FractionAssert<Long> assertSplit = FractionAssert.on(split);
+                    assertSplit.expectedWorkDone((long)NUM_STEPS).check();
+                }
+            });
+            futures.add(future);
+
+        }
+        for(Future<?> future : futures) {
+            future.get();
+        }
+        // all done
+        FractionAssert<Long> assertMaster = FractionAssert.on(fractionalProgress);
+        assertMaster.expectedWorkDone((long)NUM_THREADS - 1).check();
+    }
 }

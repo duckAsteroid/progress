@@ -59,7 +59,7 @@ public class FractionalProgressLong extends AbstractFractionalProgress<Long> imp
         if (status != null) {
             notify(status);
         }
-        // notify delegate of new work
+        // calc fraction work and propogate
         super.fractionWorked(amount.doubleValue() /  total.doubleValue());
     }
 
