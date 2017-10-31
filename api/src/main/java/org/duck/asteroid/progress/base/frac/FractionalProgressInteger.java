@@ -73,8 +73,23 @@ public class FractionalProgressInteger extends AbstractFractionalProgress<Intege
 
     @Override
     public void setFractionDoneInternal(double fractionDone, AbstractProgressMonitor ignored) {
-        Double doubleWork = total.doubleValue() * fractionDone;
-        work.set(doubleWork.intValue());
-        // DO NOT pass to delegate - it passed it to us!
+        final Double newWorkAmount = total.doubleValue() * fractionDone;
+        boolean done = false;
+        do {
+            // what is the current value?
+            Integer current = work.get();
+            // only update if we are making it bigger
+            if (newWorkAmount.intValue() > current) {
+                // try to set the value (unless it changed again)
+                done = work.compareAndSet(current, newWorkAmount.intValue());
+                // loop if not set - and have another go!
+            }
+            else {
+                // nothing to update - we are already behind the curve
+                break;
+            }
+        }
+        while(!done);
+
     }
 }
