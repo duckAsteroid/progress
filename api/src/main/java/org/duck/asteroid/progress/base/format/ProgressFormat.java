@@ -4,6 +4,9 @@ import org.duck.asteroid.progress.ProgressMonitor;
 
 import java.text.NumberFormat;
 
+/**
+ * A class that turns a {@link ProgressMonitor} into a {@link String} form for human consumption
+ */
 public class ProgressFormat {
 	/** A default (everything on) format for monitors */
 	public static final ProgressFormat DEFAULT = new ProgressFormat(true, true, true, true, true);
@@ -24,8 +27,6 @@ public class ProgressFormat {
 		this.showStatus = showStatus;
 	}
 
-	// FIXME - use message format to control output in detail
-	
 	/** A number format for percentages */
 	protected static final NumberFormat PERCENT_FMT = NumberFormat.getPercentInstance();
 	

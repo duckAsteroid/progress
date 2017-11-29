@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * An abstract base class for all monitors. This handles listeners status and name.
  */
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
-	public static long DEFAULT_SIZE = 1;
+	/** Default size of a progress monitor if {@link #setSize(long)} is not called */
+	private static final long DEFAULT_SIZE = 1;
 	/** The current task name */
 	protected final String taskName;
 	/** The last set value of {@link #setStatus(String)} */

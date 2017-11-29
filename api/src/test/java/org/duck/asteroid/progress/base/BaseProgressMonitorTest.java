@@ -6,10 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
@@ -93,13 +90,13 @@ public class BaseProgressMonitorTest {
 	@Test
 	public void subTaskConcurrencyTest() throws ExecutionException, InterruptedException {
 		ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
-		ArrayList<Future<?>> futures = new ArrayList<>();
+		ArrayList<Future<ProgressMonitor>> futures = new ArrayList<>();
 		subject.setSize(NUM_THREADS);
 		// simple fractionWorked updated from multiple threads
 		for(int i = 0; i < NUM_THREADS; i ++) {
-			Future<?> future = executor.submit(new Runnable() {
+			Future<ProgressMonitor> future = executor.submit(new Callable<ProgressMonitor>() {
 				@Override
-				public void run() {
+				public ProgressMonitor call() {
 					ProgressMonitor split = subject.newSubTask(Thread.currentThread().getName());
 					split.setSize(NUM_STEPS);
 					for (int k = 0; k < NUM_STEPS; k++) {
@@ -107,15 +104,16 @@ public class BaseProgressMonitorTest {
 					}
 					System.out.println(Thread.currentThread().getName() + " DONE @ "+split.getFractionDone());
 					split.done();
-					assertEquals(1.0, split.getFractionDone(), 0.001);
-					assertTrue(split.isDone());
+					return split;
 				}
 			});
 			futures.add(future);
 
 		}
-		for(Future<?> future : futures) {
-			future.get();
+		for(Future<ProgressMonitor> future : futures) {
+			ProgressMonitor split = future.get();
+			assertEquals(1.0, split.getFractionDone(), 0.001);
+			assertTrue(split.isDone());
 		}
 		// all done
 		assertEquals(1.0, subject.getFractionDone(), 0.0001);

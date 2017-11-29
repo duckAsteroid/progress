@@ -60,7 +60,7 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 		return cancelled.get();
 	}
 
-	public synchronized void setCancelled(boolean cancelled) {
+	public void setCancelled(boolean cancelled) {
 		this.cancelled.set(cancelled);
 	}
 
