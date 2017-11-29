@@ -24,6 +24,8 @@ public class LoggingProgress extends BaseProgressMonitor {
 
     @Override
     public void logUpdate(ProgressMonitor source)  {
-		logger.log(level, format.format(source));
+        if (logger.isLoggable(level)) {
+            logger.log(level, format.format(source));
+        }
 	}
 }
