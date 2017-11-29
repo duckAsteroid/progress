@@ -2,22 +2,24 @@ progress
 ========
 ![build status](https://travis-ci.org/duckAsteroid/progress.svg?branch=master)
 
-A Java library for reporting progress - with console implementationa and bindings for various UI tookits.
+An implementation agnostic Java library for reporting progress - with bindings for various logging and UI toolkits.
+
+Think of it like [SLF4J](https://www.slf4j.org/) but for progress reporting, rather than logging.
 
 If you are passed a `ProgressMonitor` instance into your code - it is very straightforward to use. Here is the most basic 
 example:
 
 ```java
 public void someMethod(ProgressMonitor monitor) {
-  FractionalProgressMonitor<Integer> fraction = monitor.asInteger(100);
-  fraction.notify("Starting to do some stuff");
+  monitor.setSize(100);
+  monitor.setStatus("Starting to do some stuff");
   
   try {
     for(int i=0; i < 10; i++) {
-      fraction.notify("Doing stuff " + i +" of 10");
+      monitor.setStatus("Doing stuff " + i +" of 10");
       // do something sensible that takes time
       Thread.sleep(1000);
-      fraction.worked(10);
+      monitor.worked(10);
     }
   }
   catch(InterruptedException e) {
