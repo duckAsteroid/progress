@@ -1,36 +1,35 @@
 package org.duck.asteroid.progress.base;
 
-import org.duck.asteroid.progress.FractionalProgress;
+import org.duck.asteroid.progress.ProgressMonitor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
- * A helper for doing assertions on a {@link FractionalProgress}
- * @param <T>
+ * A helper for doing assertions on a {@link ProgressMonitor}
  */
-public class FractionAssert<T extends Number> {
-    private final T total;
-    private T work;
-    private FractionalProgress<T> progress;
+public class FractionAssert {
+    private final long total;
+    private long work;
+    private ProgressMonitor progress;
 
-    private FractionAssert(T total) {
+    private FractionAssert(long total) {
         this.total = total;
     }
 
-    public static <T extends Number> FractionAssert<T> outOf(T total) {
-        return new FractionAssert<>(total);
+    public static FractionAssert outOf(long total) {
+        return new FractionAssert(total);
     }
 
-    public static <T extends Number> FractionAssert<T> on(FractionalProgress<T> progress) {
-        return new FractionAssert<>(progress.getTotalWork()).with(progress);
+    public static FractionAssert on(ProgressMonitor progress) {
+        return new FractionAssert(progress.getSize()).with(progress);
     }
 
-    public FractionAssert<T> expectedWorkDone(T worked) {
+    public FractionAssert expectedWorkDone(long worked) {
         this.work = worked;
         return this;
     }
 
-    public FractionAssert<T> with(FractionalProgress<T> progress) {
+    public FractionAssert with(ProgressMonitor progress) {
         this.progress = progress;
         return this;
     }
@@ -38,26 +37,13 @@ public class FractionAssert<T extends Number> {
     /**
      * Given the state of the expected work done - validate the values of the progress
      */
-    public FractionAssert<T> check(double fraction) {
-        assertEquals(total.longValue(), progress.getTotalWork().longValue());
-        assertEquals(work.longValue(), progress.getWorkDone().longValue());
-        if (total.longValue() != 0) {
-            long remaining = total.longValue() - work.longValue();
-            assertEquals(remaining, progress.getWorkRemaining().longValue());
-        }
+    public FractionAssert check() {
+        assertEquals(total, progress.getSize());
+        assertEquals(work, progress.getWorkDone());
+        double fraction = (double)work / (double)total;
         assertEquals(fraction, progress.getFractionDone(), 0.0001);
         boolean complete = fraction >= 1.0d;
-        assertEquals(complete, progress.isWorkComplete());
+        assertEquals(complete, progress.isDone());
         return this;
-    }
-
-    public FractionAssert<T> check() {
-        if (total.longValue() != 0) {
-            double fraction = work.doubleValue() / total.doubleValue();
-            return check(fraction);
-        }
-        else {
-            return check(1.0);
-        }
     }
 }

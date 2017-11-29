@@ -1,9 +1,8 @@
 package org.duck.asteroid.progress.base.format;
 
-import java.text.NumberFormat;
-
-import org.duck.asteroid.progress.FractionalProgress;
 import org.duck.asteroid.progress.ProgressMonitor;
+
+import java.text.NumberFormat;
 
 public class ProgressFormat {
 	/** A default (everything on) format for monitors */
@@ -45,12 +44,7 @@ public class ProgressFormat {
 		}
 		
 		if (showWork) {
-			if (monitor instanceof FractionalProgress) {
-				FractionalProgress<?> asFraction = (FractionalProgress<?>)monitor;
-				sb.append("[").append(asFraction.getWorkDone()).append('/').append(asFraction.getTotalWork()).append("] ");
-			} else {
-				sb.append("[").append(monitor.getFractionDone()).append("] ");
-			}
+			sb.append("[").append(monitor.getWorkDone()).append('/').append(monitor.getSize()).append("] ");
 		}
 		
 		if (showPercent) {
