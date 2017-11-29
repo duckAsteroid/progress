@@ -1,7 +1,6 @@
 package org.duck.asteroid.progress.base;
 
 import org.duck.asteroid.progress.ProgressMonitor;
-import org.duck.asteroid.progress.base.frac.AbstractFractionalProgress;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,14 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * form?
  */
 public class BaseProgressMonitor extends AbstractProgressMonitor implements ProgressMonitor {
-	public static final double NOT_STARTED = 0.0d;
-	public static final double DONE = 1.0d;
 
 	/** Has cancellation been requested */
 	protected AtomicBoolean cancelled = new AtomicBoolean(false);
-
-	/** The fractional work done */
-	protected AtomicLong workDoneFraction = new AtomicLong(Double.doubleToLongBits(NOT_STARTED));
 
 	public BaseProgressMonitor() {
 		super();
@@ -32,25 +26,13 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 		super(name);
 	}
 
-	@Override
-	public double getFractionDone() {
-		return Double.longBitsToDouble(workDoneFraction.get());
+	public BaseProgressMonitor(final String name, final long size) {
+		super(name);
+		this.setSize(size);
 	}
 
-	@Override
-	public void setFractionDone(final double fractionDone) {
-		setFractionDoneInternal(fractionDone, null);
-	}
-
-	@Override
-	public void setFractionDoneInternal(final double fractionDone, final AbstractProgressMonitor ignored) {
-		workDoneFraction.set(Double.doubleToLongBits(fractionDone));
-		for (AbstractFractionalProgress<?> projection : projections) {
-			if (ignored != projection) {
-				projection.setFractionDoneInternal(fractionDone, ignored);
-			}
-		}
-		logUpdate(this);
+	public BaseProgressMonitor(final long size) {
+		this.setSize(size);
 	}
 
 	@Override
@@ -58,15 +40,7 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 		// NO-OP - subclasses may hook in here
 	}
 
-	@Override
-	public boolean isWorkComplete() {
-		return Double.longBitsToDouble(workDoneFraction.get()) >= DONE;
-	}
 
-	@Override
-	public void done() {
-		setFractionDone(DONE);
-	}
 
 	/**
 	 * Always returns <code>null</code>
@@ -74,6 +48,7 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 	public ProgressMonitor getParent() {
 		return null;
 	}
+
 	/**
 	 * Always returns an empty list.
 	 */
@@ -85,10 +60,9 @@ public class BaseProgressMonitor extends AbstractProgressMonitor implements Prog
 		return cancelled.get();
 	}
 
-	public synchronized void setCancelled(boolean cancelled) {
+	public void setCancelled(boolean cancelled) {
 		this.cancelled.set(cancelled);
 	}
-
 
 
 }

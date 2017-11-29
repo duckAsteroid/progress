@@ -1,11 +1,12 @@
 plugins {
     id 'com.jfrog.bintray' version '1.7.3'
+    id "org.sonarqube" version "2.5"
 }
 description = 'Java progress reporting library'
 
 allprojects {
     group = 'com.asteroid.duck.progress'
-    version = '1.0.1'
+    version = '1.0.2'
 }
 
 subprojects {

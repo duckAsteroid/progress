@@ -1,10 +1,12 @@
 package org.duck.asteroid.progress.base;
 
-import org.duck.asteroid.progress.FractionalProgress;
 import org.duck.asteroid.progress.ProgressMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +16,7 @@ public class BaseProgressMonitorTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		subject = new BaseProgressMonitor();
+		subject = new BaseProgressMonitor(100);
 	}
 
 	@After
@@ -22,121 +24,99 @@ public class BaseProgressMonitorTest {
 		subject = null;
 	}
 
+	/**
+	 * When we update the simple (0..1) progress things behave the way we expect
+	 */
 	@Test
-	public void testNormalSimpleFlow() {
-		Helper.testNormalSimpleFlow(subject);
-	}
-	
-	@Test
-	public void testFlowUsingSetWorkDone() {
-		Helper.testFlowUsingSetWorkDone(subject);
-	}
-	
-	@Test
-	public void testFlowUsingSetWorkRemaining(){
-		Helper.testFlowUsingSetWorkRemaining(subject);
-	}
-	
-	@Test
-	public void testSubTask() {
-		FractionalProgress<Integer> fraction = subject.asInteger(10);
-		
-		assertEquals(10, (int)fraction.getTotalWork());
-		assertEquals(10, (int)fraction.getWorkRemaining());
-		assertEquals(0, (int)fraction.getWorkDone());
-		assertFalse(subject.isWorkComplete());
-		{
-			ProgressMonitor subTask = fraction.newSubTask(5, "First Half");
-			FractionalProgress<Integer> subFraction = subTask.asInteger(10);
+	public void simpleUpdateTest() {
+		FractionAssert fractionAssert = FractionAssert.on(subject);
+		fractionAssert.expectedWorkDone(0).check();
 
-			assertEquals(10, (int)subFraction.getTotalWork());
-			assertEquals(10, (int)subFraction.getWorkRemaining());
-			assertEquals(0, (int)subFraction.getWorkDone());
-			assertFalse(subTask.isWorkComplete());
-			// check nothing changed in parent
-			assertEquals(10, (int)fraction.getTotalWork());
-			assertEquals(10, (int)fraction.getWorkRemaining());
-			assertEquals(0, (int)fraction.getWorkDone());
-			assertFalse(subject.isWorkComplete());
-			
-			subFraction.worked(3, "Three tenths");
-			// worked 3/10 in subTask
-			assertEquals(10, (int)subFraction.getTotalWork());
-			assertEquals(7, (int)subFraction.getWorkRemaining());
-			assertEquals(3, (int)subFraction.getWorkDone());
-			assertFalse(subTask.isWorkComplete());
-			// = (3/10) * 0.5 = 0.15 in parent
-			assertEquals(0.15, subject.getFractionDone(), 0.0001d);
-			// = (3/10) * 5 = 1.5 (or 1)
-			assertEquals(10, (int)fraction.getTotalWork());
-			assertEquals(9, (int)fraction.getWorkRemaining());
-			assertEquals(1, (int)fraction.getWorkDone());
-			assertFalse(subject.isWorkComplete());
-		}
-		
-		
-		{
-			ProgressMonitor secondHalf = fraction.newSubTask(5, "Second Half");
-			
-			FractionalProgress<Integer> subFraction = secondHalf.asInteger(10);
-			
-			assertEquals(10, (int)subFraction.getTotalWork());
-			assertEquals(10, (int)subFraction.getWorkRemaining());
-			assertEquals(0, (int)subFraction.getWorkDone());
-			assertFalse(secondHalf.isWorkComplete());
+		subject.worked(50L);
+		fractionAssert.expectedWorkDone(50).check();
 
-			subFraction.worked(3, "one third");
-			// worked 3/10 in subTask
-			assertEquals(10, (int)subFraction.getTotalWork());
-			assertEquals(7, (int)subFraction.getWorkRemaining());
-			assertEquals(3, (int)subFraction.getWorkDone());
-			assertFalse(secondHalf.isWorkComplete());
-			
-			// worked = (3/10) * 5 = 1.5 (1) in parent
-			// but workDone = 1; so new workDone = 1
-			assertEquals(10, (int)fraction.getTotalWork());
-			assertEquals(9, (int)fraction.getWorkRemaining());
-			assertEquals(1, (int)fraction.getWorkDone());
-			assertFalse(subject.isWorkComplete());
+		subject.worked(50L);
+		fractionAssert.expectedWorkDone(100).check();
 
-			subFraction.setWorkRemaining(0);
-			// worked 10/10 in subTask
-			assertEquals(10, (int)subFraction.getTotalWork());
-			assertEquals(0, (int)subFraction.getWorkRemaining());
-			assertEquals(10, (int)subFraction.getWorkDone());
-			assertTrue(secondHalf.isWorkComplete());
-			
-			// worked = (7/10) * 5 = 3.5 (3) in parent
-			// but workDone = 2; so new workDone = 5 
-			assertEquals(10, (int)fraction.getTotalWork());
-			assertEquals(5, (int)fraction.getWorkRemaining());
-			assertEquals(5, (int)fraction.getWorkDone());
-			assertFalse(subject.isWorkComplete());
-			
-		}
+		subject.worked(50L);
+		fractionAssert.expectedWorkDone(150).check();
 	}
 
+
+
+	final int NUM_THREADS = 5;
+	final int NUM_STEPS = 10;
+	/**
+	 * Concurrency test - hitting the same progress from multiple threads does not yield bad progress
+	 */
 	@Test
-	public void testSubTaskWithFractionalValues() {
-		// a small number of very large subtasks
-		FractionalProgress<Integer> fraction = subject.asInteger(2);
-		{
-			ProgressMonitor subTask = fraction.newSubTask(1, "large subtask 1");
-			FractionalProgress<Integer> subfraction = subTask.asInteger(1000);
-			for(int i = 1 ; i <= 100; i ++ ) {
-				subfraction.worked(10, "Did 10");
-				assertEquals(1000, (int)subfraction.getTotalWork());
-				assertEquals( i * 10, (int)subfraction.getWorkDone());
-				assertEquals(1000 - (i * 10), (int)subfraction.getWorkRemaining());
-				assertEquals(i == 100, subfraction.isWorkComplete());
+	public void simpleConcurrencyTest() throws ExecutionException, InterruptedException {
+		// this gives us a pool of threads
+		ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+		ArrayList<Future<?>> futures = new ArrayList<>();
+		// simple work updated from multiple threads
+		subject.setSize(NUM_STEPS * NUM_THREADS);
+		// create NUM_THREADS * NUM_STEPS tasks and submit to executor
+		for(int i = 0; i < NUM_THREADS; i ++) {
+			for (int j = 0; j < NUM_STEPS; j++) {
+
+				Future<?> future = executor.submit(new Runnable() {
+					@Override
+					public void run() {
+						subject.worked(1);
+						System.out.println(subject + " by "+ Thread.currentThread().getName());
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException e) {
+							// ignore
+						}
+					}
+				});
+				futures.add(future);
 			}
-			subfraction.done();
-			assertTrue(subfraction.isWorkComplete());
-			assertTrue(subTask.isWorkComplete());
-			assertFalse(fraction.isWorkComplete());
-
-			assertEquals(0.5d, fraction.getFractionDone(), 0.00001d);
-			assertEquals(0.5d, subject.getFractionDone(), 0.00001d);
 		}
+		for(Future<?> future : futures) {
+			future.get();
+		}
+		// all done
+		assertEquals(1.0, subject.getFractionDone(), 0.0001);
+		assertTrue(subject.isDone());
+	}
+
+	/**
+	 * Concurrency test - hitting the sub task progress from multiple threads does not yield bad progress
+	 * in parent
+	 */
+	@Test
+	public void subTaskConcurrencyTest() throws ExecutionException, InterruptedException {
+		ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+		ArrayList<Future<ProgressMonitor>> futures = new ArrayList<>();
+		subject.setSize(NUM_THREADS);
+		// simple fractionWorked updated from multiple threads
+		for(int i = 0; i < NUM_THREADS; i ++) {
+			Future<ProgressMonitor> future = executor.submit(new Callable<ProgressMonitor>() {
+				@Override
+				public ProgressMonitor call() {
+					ProgressMonitor split = subject.newSubTask(Thread.currentThread().getName());
+					split.setSize(NUM_STEPS);
+					for (int k = 0; k < NUM_STEPS; k++) {
+						split.worked(1L);
+					}
+					System.out.println(Thread.currentThread().getName() + " DONE @ "+split.getFractionDone());
+					split.done();
+					return split;
+				}
+			});
+			futures.add(future);
+
+		}
+		for(Future<ProgressMonitor> future : futures) {
+			ProgressMonitor split = future.get();
+			assertEquals(1.0, split.getFractionDone(), 0.001);
+			assertTrue(split.isDone());
+		}
+		// all done
+		assertEquals(1.0, subject.getFractionDone(), 0.0001);
+		assertTrue(subject.isDone());
 	}
 }
