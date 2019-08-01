@@ -14,6 +14,7 @@ subprojects {
     /* Java basics */
     apply plugin: 'java'
     apply plugin: 'org.sonarqube'
+    apply plugin: 'jacoco'
 
     sourceCompatibility = 1.8
 
@@ -24,6 +25,12 @@ subprojects {
 
     dependencies {
         testCompile 'junit:junit:4.+'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
     }
 
     /* Add ability to publish JARs to Maven (e.g. bintray) */
