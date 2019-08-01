@@ -1,6 +1,8 @@
 progress
 ========
 ![build status](https://travis-ci.org/duckAsteroid/progress.svg?branch=master)
+[![Known Vulnerabilities](https://snyk.io//test/github/duckAsteroid/progress/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/duckAsteroid/progress?targetFile=build.gradle)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.asteroid.duck.progress%3Aprogress&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.asteroid.duck.progress%3Aprogress)
 
 An implementation agnostic Java library for reporting progress - with bindings for various logging and UI toolkits.
 
