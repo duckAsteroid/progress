@@ -1,7 +1,7 @@
 plugins {
-    id 'com.jfrog.bintray' version '1.8.4'
-    id "org.sonarqube" version "2.7.1"
-    id "jacoco"
+    id 'com.jfrog.bintray' version '1.8.4' apply(false)
+    id 'org.sonarqube' version '2.7.1' apply(false)
+    id 'jacoco'
 }
 description = 'Java progress reporting library'
 
@@ -13,6 +13,7 @@ allprojects {
 subprojects {
     /* Java basics */
     apply plugin: 'java'
+    apply plugin: 'org.sonarqube'
 
     sourceCompatibility = 1.8
 
@@ -49,6 +50,7 @@ subprojects {
             licenses = ['MIT']
             vcsUrl = 'https://github.com/duckAsteroid/progress.git'
         }
+        //dryRun = true // used to test
         publish = true // Whether version should be auto published after an upload
         override = true // Whether to override version artifacts already published
         publications = ['maven']
