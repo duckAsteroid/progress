@@ -13,9 +13,6 @@ allprojects {
 subprojects {
     /* Java basics */
     apply plugin: 'java'
-    apply plugin: 'org.sonarqube'
-    apply plugin: 'jacoco'
-
     sourceCompatibility = 1.8
 
     repositories {
@@ -27,9 +24,19 @@ subprojects {
         testCompile 'junit:junit:4.+'
     }
 
+    /* Test coverage */
+    apply plugin: 'jacoco'
     jacocoTestReport {
         reports {
             xml.enabled true
+        }
+    }
+
+    /* sonarqube cloud */
+    apply plugin: 'org.sonarqube'
+    sonarqube {
+        properties {
+            property "sonar.coverage.jacoco.xmlReportPaths", "**/jacocoTestReport.xml"
         }
     }
 
