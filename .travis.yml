@@ -7,8 +7,7 @@ script:
   - ./gradlew --no-daemon bintrayUpload
 cache:
   directories:
-  - "$HOME/.gradle/caches/"
-  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.gradle/"
 env:
   global:
   - secure: iWJNBPYH666h1hOBRL9EuCz6Jrf9Ci4tR+8YKKuRDVopVjaSSQRKRdxOY1CZwnZF7Yj/RNZvxp3dmAtA8WrO7D58dB+bgvxHwj/HBP3Qi7tXVJNgQw+jBin9CCYgILKkfMO3/6dvOUlloOM4yUir3PLYPueVL1asipD+XQxOlqE=
