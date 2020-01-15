@@ -1,0 +1,89 @@
+@startuml
+actor client
+participant P1
+participant P2
+participant P3
+actor listener
+
+client -> P1: create
+activate P1
+client -> P1 : setSize(100)
+client -> P1 : subTask("P2", 50)
+P1 --> client : P2
+deactivate P1
+
+client -> P2 : setSize(10)
+activate P2
+client -> P2 : worked("Stuff", 1)
+P2 -> listener : logUpdate(P2, WORKED)
+activate listener
+P2 <-- listener :
+deactivate listener
+client <-- P2
+deactivate P2
+
+... more P2 worked() ...
+
+client -> P2 : done()
+activate P2
+P2 -> listener : logUpdate(P2, DONE)
+activate listener
+P2 <-- listener
+deactivate listener
+P2 -> P1: worked("P2", 50)
+activate P1
+P1 -> listener : logUpdate(P1, WORKED)
+activate listener
+P1 <-- listener
+deactivate listener
+P2 <-- P1
+deactivate P1
+client <-- P2
+deactivate P2
+
+
+
+
+client -> P1 : subTask("P3", 50)
+activate P1
+P1 --> client : P3
+deactivate P1
+
+client -> P3 : setSize(3)
+activate P3
+client -> P3 : worked("Other Stuff", 1)
+P3 -> listener : logUpdate(P3, WORKED)
+activate listener
+P3 <-- listener
+deactivate listener
+P3 <-- client
+deactivate P3
+
+... more worked() ...
+
+client -> P3 : done()
+activate P3
+P3 -> listener : logUpdate(P3, DONE)
+activate listener
+P3 <-- listener
+deactivate listener
+P3 -> P1 : worked("P3", 50);
+activate P1
+P1 -> listener : logUpdate(P1, WORKED)
+activate listener
+P1 <-- listener
+deactivate listener
+P3 <-- P1
+deactivate P1
+client <-- P3
+deactivate P3
+
+client -> P1 : done()
+activate P1
+P1 -> listener : logUpdate(P1, DONE)
+activate listener
+P1 <-- listener
+deactivate listener
+client <-- P1
+deactivate
+@enduml

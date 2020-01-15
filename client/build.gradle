@@ -1,0 +1,7 @@
+description = 'Client library for framework reporting'
+
+dependencies {
+    compile project(':api')
+    // Mockito
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+}

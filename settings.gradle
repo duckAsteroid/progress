@@ -1,3 +1,6 @@
 include 'api'
+include 'client'
+include 'format'
 include 'console'
+include 'java-logging'
 include 'slf4j'

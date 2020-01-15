@@ -1,15 +1,16 @@
 package org.duck.asteroid.progress.slf4j;
 
 import org.duck.asteroid.progress.ProgressMonitor;
-import org.duck.asteroid.progress.base.AbstractProgressMonitor;
-import org.duck.asteroid.progress.base.BaseProgressMonitor;
+import org.duck.asteroid.progress.base.event.ProgressMonitorEvent;
+import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
+import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 import org.duck.asteroid.progress.base.format.ProgressFormat;
 import org.slf4j.Logger;
 
 /**
  *
  */
-public class Slf4JProgress extends BaseProgressMonitor {
+public class Slf4JProgress implements ProgressMonitorListener {
     private final Logger logger;
     private final ProgressFormat format;
     private final Level level;
@@ -92,9 +93,9 @@ public class Slf4JProgress extends BaseProgressMonitor {
     }
 
     @Override
-    public void logUpdate(final ProgressMonitor child) {
+    public void logUpdate(final ProgressMonitorEvent evt) {
         if (level.isEnabled(logger)) {
-            String format = this.format.format(child);
+            String format = this.format.format(evt.getSource());
             level.write(logger, format);
         }
     }

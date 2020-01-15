@@ -1,12 +1,27 @@
 package org.duck.asteroid.progress;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * The interface to an object an application can use to report work on a task.
- * A task only has a fractional completion state (0 - 1) represented as a double.
+ * The task has a {@linkplain #getSize() size} - representing the total amount of work to be done.
+ * The application then logs {@linkplain #worked(long, String) work} against this (adding an amount of work to the
+ * {@linkplain #getWorkDone() work done}. The application may also update the current status message (with or without
+ * updating the work done) as a way to indicate the process is ongoing.
+ * When the application has completed the task (regardless of how much work has been logged) it must call {@link #done()}
+ * in the case of subtasks - this is necessary to log the work on the parent.
+ * A progress monitor is also {@link Closeable} for this purpose (the {@link #close()} method simply calls {@link #done()})
+ * so the client may use a <code>try with</code> construct.
+ *
+ * Progress monitors incorporate a {@link #isCancelled() cancellation} mechanism that permits the instance owner to send
+ * cancellation (stop processing) notification to the receiver.
+ *
+ * NOTE: Implementations of this interface are intended to be fool proof for use by client code, if they you dumb stuff
+ * (e.g. log too much work, call done twice etc.) it should not result in any runtime exception or odd behaviour.
  */
-public interface ProgressMonitor {
+public interface ProgressMonitor extends Comparable<ProgressMonitor>, Closeable {
 	/**
 	 * The parent monitor of this monitor (if any)
 	 * @return the parent monitor or <code>null</code> if this is the root
@@ -14,7 +29,7 @@ public interface ProgressMonitor {
 	ProgressMonitor getParent();
 
 	/**
-	 * The path from this monitor to the root through all parent contexts.
+	 * The path from this monitor to the root through all parent contexts in order leaf to root.
 	 * @return a list of parent contexts (all the way to the root); an empty list if this is the root.
 	 */
 	List<ProgressMonitor> getContext();
@@ -42,13 +57,13 @@ public interface ProgressMonitor {
 
 	/**
 	 * Modify the overall size of this task. If the current {@link #getWorkDone()} is already more than
-	 * this then the monitor will be {@link #isDone() done}.
-	 * The size cannot be modified to less than 1.
+	 * this then the monitor will also be marked {@link #isDone() done}.
+	 * Changing the size of a "done" monitor has no effect, it remains done...
+	 * The size cannot be modified to less than 1; the value defaults to this if out of range.
 	 * Note: modifying the size of a subtask - does not influence the work it contributes to the parent task
 	 * @param size the new size of this task
-	 * @throws IllegalArgumentException if the size is less than 1
 	 */
-	void setSize(long size) throws IllegalArgumentException;
+	void setSize(long size);
 
 	/**
 	 * The current amount of work done. This is always a positive number or zero.
@@ -58,51 +73,66 @@ public interface ProgressMonitor {
 	long getWorkDone();
 
 	/**
-	 * Log an amount of work and (optionally) update the status in a single operation
+	 * Log an amount of work and (optionally) update the status in a single operation.
+	 * This operation has no effect if the monitor is {@linkplain #isDone() done} or
+	 * {@linkplain #isCancelled() cancelled}.
+	 * If this work takes the {@linkplain #getWorkDone() total work done} past the {@linkplain #getSize() size} then
+	 * the monitor will be marked done.
+	 * If the amount of work is less than zero, it will default to zero
 	 * @param amount the amount of work done
 	 * @param status a status message to set (if not <code>null</code>)
 	 * @returns the value of {@link #getWorkDone()} as a result of this new work
-	 * @throws IllegalArgumentException if the amount of work is less than 0
 	 */
 	long worked(long amount, String status);
+
 	/**
-	 * Log an amount of work
+	 * Log an amount of work with no (null) corresponding status update.
+	 * This is the same as calling <code>worked(amount, null)</code>
+	 * @see #worked(long, String)
 	 * @param amount the amount of work done
 	 * @returns the value of {@link #getWorkDone()} as a result of this new work
-	 * @throws IllegalArgumentException if the amount of work is less than 0
 	 */
 	long worked(long amount);
 
 	/**
 	 * Called to set the work done to the size of the task (at this point in time)
-	 * Subsequent modifications to {@link #getSize()} may alter this.
+	 * Subsequent modifications to {@link #getSize()} may alter this, but the progress will only be done once
 	 */
 	void done();
 
 	/**
-	 * Is the work reported complete (i.e. is {@link #getWorkDone()} &gt;= {@link #getSize()}} )
-	 * @return true if the work is complete/done
+	 * Has the work reported completed (i.e. {@link #getWorkDone()} &gt;= {@link #getSize()}} )
+	 * NOTE: This is a one time event, if the work done is ever &gt;= the size - subsequent increases in the size
+	 * don't "undo" the monitor, it remains done.
+	 * @return true if the work was complete/done
 	 */
 	boolean isDone();
-	
+
+	@Override
+	default void close() throws IOException { done();}
+
 	/**
-	 * Has the task being reported been cancelled.
+	 * Has the task being reported been cancelled. This is used as a signal between the class doing progress
+	 * and the outside world that may wish it to stop before it is complete.
+	 * The cancelled state has no appreciable impact on the rest of the workings of the monitor - it's for the
+	 * receiver and the publisher of the progress to decide what to do with it.
 	 * @return true if cancelled
 	 */
 	boolean isCancelled();
 	/**
-	 * Change the cancelled state of the task being monitored (and that of all sub-tasks)
+	 * Change the cancelled state of the task being monitored (and that of all sub-tasks).
+	 * @see #isCancelled()
 	 * @param cancelled the new cancelled state
 	 */
 	void setCancelled(boolean cancelled);
 
 	/**
-	 * Create a sub task of this - which when {@link #isDone()} equates to the given amount of work in
-	 * this task.
+	 * Create a sub task of this - which when {@linkplain #isDone() done} equates to the given amount of work in
+	 * this monitor.
 	 * @param name the name of the sub task
-	 * @param size the relative size of this new task
+	 * @param size the relative work this new task contributes to this monitor
 	 * @return a new progress monitor for the sub task
-	 * @throws IllegalStateException If this task is already {@link #isDone() done}
+	 * @throws IllegalStateException If this task is already {@link #isDone() done} or is {@link #isCancelled() cancelled}
 	 */
 	ProgressMonitor newSubTask(String name, long size);
 
@@ -113,14 +143,13 @@ public interface ProgressMonitor {
 	 * <code>size = 1</code>
 	 * @param name the name of the sub task
 	 * @return a new progress monitor for the sub task
-	 * @throws IllegalStateException If this task is already {@link #isDone() done}
+	 * @throws IllegalStateException If this task is already {@link #isDone() done} or is {@link #isCancelled() cancelled}
 	 */
 	ProgressMonitor newSubTask(String name);
 
 	/**
-	 * The {@link #getWorkDone()} as a fraction of the {@link #getSize()} for this task.
-	 * NOTE: this is intended to be in the range 0 - 1; however if the work done exceeds
-	 * the size of this task - the fraction will be &gt; 1
+	 * The {@link #getWorkDone()} as a fraction of the {@link #getSize()} for this task in the range 0 to 1
+	 * NOTE: This value can never be less than 0 or more than 1
 	 * @return the fraction done
 	 */
 	double getFractionDone();

@@ -2,5 +2,7 @@ description = "A progress implementation for SLF4J"
 
 dependencies {
     compile project(':api')
+    compile project(':client')
+    compile project(':format')
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
 }

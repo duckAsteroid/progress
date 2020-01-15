@@ -1,0 +1,7 @@
+description = 'A Java logging framework implementation of progress reporting'
+
+dependencies {
+    compile project(':api')
+    compile project(':client')
+    compile project(':format')
+}

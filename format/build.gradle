@@ -1,0 +1,5 @@
+description = "Utility library for turning ProgressMonitor into String"
+dependencies {
+    compile project(':api')
+    testCompile project(':client')
+}
