@@ -37,3 +37,26 @@ public void someMethod(ProgressMonitor monitor) {
 ```
 
 Whats most important is that this brings no other dependencies into the client code - however the underlying `ProgressMonitor` instance may be implemented (and mapped through to corresponding monitor classes) for Console, Swing, Eclipse ...
+
+Getting Started
+===============
+
+To use the library you need to add my Maven repository at `https://dl.bintray.com/duck-asteroid/maven` to your build.
+
+In Gradle you would add the following:
+```groovy
+repositories {
+    maven {
+        url = 'https://dl.bintray.com/duck-asteroid/maven'
+        name = 'github::duckAsteroid'
+        description = 'Repo for DuckAsteroids libraries'
+    }
+}
+```
+
+Then you would add the dependency for the pure API as follows:
+```groovy
+dependencies {
+    implementation 'com.asteroid.duck.progress:api:1.0.3'
+}
+```
