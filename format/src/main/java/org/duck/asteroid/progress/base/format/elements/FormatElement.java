@@ -2,8 +2,24 @@ package org.duck.asteroid.progress.base.format.elements;
 
 import org.duck.asteroid.progress.ProgressMonitor;
 
+/**
+ * A piece of the formatting output
+ */
 public interface FormatElement {
+    /**
+     * Write the output of this format element to the string for the given
+     * monitor state
+     * @param sb the place to write output
+     * @param monitor the monitor to capture state from
+     */
     void appendTo(StringBuilder sb, ProgressMonitor monitor);
+
+    /**
+     * Does this element produce any output for the given monitor
+     * @param monitor
+     * @return true if calling {@link #appendTo(StringBuilder, ProgressMonitor)} would
+     * result in output
+     */
     default boolean hasContent(ProgressMonitor monitor) {
         return true;
     }

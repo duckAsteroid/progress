@@ -1,9 +1,7 @@
 package org.duck.asteroid.progress.slf4j;
 
-import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.event.ProgressMonitorEvent;
 import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
-import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 import org.duck.asteroid.progress.base.format.ProgressFormat;
 import org.slf4j.Logger;
 

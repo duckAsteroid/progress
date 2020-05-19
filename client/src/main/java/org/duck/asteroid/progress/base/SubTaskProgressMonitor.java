@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 	/** The context of this monitor */
-	protected final LinkedList<ProgressMonitor> context;
+	protected final List<ProgressMonitor> context;
 	/** parent (supplied in constructor) */
 	protected final AbstractProgressMonitor parent;
 	/** The amount of work that this monitor contributes to it's parent when done */
@@ -39,14 +39,18 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 		this.totalParentWork = totalParentWork;
 		
 		// calculate this monitors context
-		this.context = new LinkedList<>(parent.getContext());
-		this.context.add(parent);
+		LinkedList<ProgressMonitor> tmp = new LinkedList<>(parent.getContext());
+		tmp.addLast(parent);
+		this.context = Collections.unmodifiableList(tmp);
 	}
 
 	@Override
 	protected void onDone() {
-		// we are done - log the total work in the parent
+		// this sub task is done
+		// log the total work in the parent
 		parent.worked(this.totalParentWork, taskName);
+		// remove this from the list of active children in the parent
+		parent.removeSubTask(this);
 	}
 
 	@Override
@@ -56,7 +60,7 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 
 	@Override
 	public List<ProgressMonitor> getContext() {
-		return Collections.unmodifiableList(context);
+		return context;
 	}
 
 	@Override
@@ -71,6 +75,7 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 
 	@Override
 	public void notifyListeners(ProgressMonitor source, ProgressUpdateType updateType) {
+		// delegate to the parent to do the notification
 		parent.notifyListeners(source, updateType);
 	}
 }

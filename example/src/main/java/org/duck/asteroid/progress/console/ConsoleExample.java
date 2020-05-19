@@ -6,13 +6,16 @@ import org.duck.asteroid.progress.base.format.CompoundFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class SingleLineConsoleProgressTest {
+/**
+ * An example using the console progress
+ */
+public class ConsoleExample {
 
     private static Random rnd = new Random();
 
     public static void main(String[] args)  {
         boolean multiline = args.length > 0 ? Boolean.parseBoolean(args[0]) : true;
-        int delay = args.length > 1 ? Integer.parseInt(args[1]) : 50;
+        int delay = args.length > 1 ? Integer.parseInt(args[1]) : 250;
         ProgressMonitor monitor = ConsoleProgress.createConsoleMonitor(CompoundFormat.MAXIMAL, multiline);
         monitor.setSize(2);
         for(int i = 0; i < 2; i ++) {

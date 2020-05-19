@@ -10,8 +10,6 @@ import org.duck.asteroid.progress.base.format.ProgressFormat;
 
 import java.io.PrintStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -19,63 +17,74 @@ import java.util.concurrent.Semaphore;
  */
 public class ConsoleProgress implements ProgressMonitorListener {
 	public static final String CLEAR_LINE = "\033[2K";
-	public static final String REWIND = "\u001B[1F";
+	public static final String CURSOR_UP_1 = "\033[1A";
+	public static final String CURSOR_DOWN_1 = "\033[1B";
+	public static final String ERASE_DOWN = "\033[J";
 
 	private final PrintStream output;
 	private final ProgressFormat formatter;
+	/** Print all active monitors - or just the updated */
+	private final boolean multiline;
 
 	private Semaphore semaphore = new Semaphore(1, false);
+	private StringBuilder eraser = new StringBuilder();
 
-	public ConsoleProgress(PrintStream output, ProgressFormat formatter) {
+	public ConsoleProgress(PrintStream output, ProgressFormat formatter, boolean multiline) {
 		this.output = output;
 		this.formatter = formatter;
+		this.multiline = multiline;
 	}
 
 	@Override
 	public void logUpdate(final ProgressMonitorEvent event) {
 		// permits only one thread to update the console
+		// or the formatting goes to hell
 		if (semaphore.tryAcquire()) {
 			try {
-				outputToConsole(event.getSource(), event.getType() == ProgressUpdateType.DONE);
+				outputToConsole(event);
 			} finally {
 				semaphore.release();
 			}
 		}
 	}
 
-	private void outputToConsole(ProgressMonitor source, boolean done) {
-		// print the context (if any)
-		List<ProgressMonitor> context = source.getContext();
-		for (int i = 0; i < context.size(); i++) {
-			output.print('\r');
-			output.print(CLEAR_LINE);
-			output.print(formatter.format(context.get(i)));
-			output.print('\n'); // get to the line to update
+	private void outputToConsole(ProgressMonitorEvent event) {
+		if (event.getType() != ProgressUpdateType.DONE) {
+			List<ProgressMonitor> toPrint;
+			if (multiline) {
+				toPrint = event.getRoot().getAllActive();
+			} else {
+				toPrint = Collections.singletonList(event.getSource());
+			}
+
+			// erase previous output
+			if (eraser.length() > 0) {
+				output.print(eraser.toString());
+				eraser = new StringBuilder(eraser.length());
+			}
+
+			// print each monitor on a new line
+			StringBuilder rewinder = new StringBuilder();
+			for (ProgressMonitor monitor : toPrint) {
+				String formatted = formatter.format(monitor);
+				output.println(formatted);
+				// build up a series of rewind commands to return the cursor
+				// for each line we print above
+				rewinder.append(CURSOR_UP_1);
+				eraser.append(CLEAR_LINE + CURSOR_DOWN_1);
+			}
+			eraser.append("\r" + rewinder.toString());
+
+			// rewind the current console
+			output.print(rewinder.toString());
+
+			output.flush();
 		}
-		// do the update to the line for the updated progress
-		boolean root = context.isEmpty();
-
-		output.print('\r');
-		output.print(CLEAR_LINE);
-
-		// only write if root OR not done
-		if (root || !done ) {
-			String format = formatter.format(source);
-			output.print(format);
-		}
-
-		// rewind (if necessary)
-		for(int i = 0; i < context.size(); i++) {
-			output.print('\r');
-			output.print(REWIND);
-		}
-
-		output.flush();
 	}
 
 	public static ProgressMonitor createConsoleMonitor(ProgressFormat format, boolean multiline) {
 		BaseProgressMonitor monitor = new BaseProgressMonitor();
-		monitor.addProgressMonitorListener(new ConsoleProgress(System.out, format));
+		monitor.addProgressMonitorListener(new ConsoleProgress(System.out, format, multiline));
 		return monitor;
 	}
 }

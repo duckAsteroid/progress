@@ -5,15 +5,16 @@ import org.duck.asteroid.progress.base.event.ProgressMonitorEvent;
 import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
 import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * An implementation of the progress monitor interface.
- * Capable of creating sub tasks and updating a list of listeners
+ * A root implementation of the progress monitor interface.
+ * Capable of creating sub tasks as required.
+ * Maintains and notifies a list of listeners.
  */
 public final class BaseProgressMonitor extends AbstractProgressMonitor implements ProgressMonitor {
 
@@ -51,7 +52,7 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 
 	@Override
 	public void notifyListeners(final ProgressMonitor source, final ProgressUpdateType updateType) {
-		final ProgressMonitorEvent event = new ProgressMonitorEvent(source, updateType);
+		final ProgressMonitorEvent event = new ProgressMonitorEvent(this, source, updateType);
 		// iterate the listeners (if any)
 		for(ProgressMonitorListener listener : listeners) {
 			listener.logUpdate(event);
@@ -61,6 +62,17 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 	@Override
 	protected void onDone() {
 		// nothing to do!
+	}
+
+	/**
+	 * A list of all the active monitors in this monitor and all children that are active.
+	 * As soon as a monitor is marked done - all children are removed from this list.
+	 * @return the list of all active monitors (in the order they were created - with their children after them)
+	 */
+	public List<ProgressMonitor> getAllActive() {
+		ArrayList<ProgressMonitor> active = new ArrayList<>(children.size() + 1);
+		appendActive(active);
+		return active;
 	}
 
 	/**
@@ -83,6 +95,9 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 
 	public void setCancelled(boolean cancelled) {
 		this.cancelled.set(cancelled);
+		if (cancelled) {
+			notifyListeners(this, ProgressUpdateType.CANCELLED);
+		}
 	}
 
 

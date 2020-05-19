@@ -4,31 +4,35 @@ import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * An abstract base class for monitors. This handles work done, status and name.
- * It also propagates updates "up" the parent hierarchy
+ * It can also handle creating and maintaining sub tasks.
  */
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	/** Default size of a progress monitor if {@link #setSize(long)} is not called */
 	private static final long DEFAULT_SIZE = 1;
-	/** The identity of this monitor (in the scope of it's parent) */
+	/** The identity of this monitor (unique in the scope of it's parent) */
 	protected final int id;
 	/** the next ID for a sub task */
 	protected AtomicInteger childId = new AtomicInteger(0);
+	/** a collection of the active children of this monitor */
+	protected CopyOnWriteArrayList<AbstractProgressMonitor> children = new CopyOnWriteArrayList<>();
 	/** The current task name */
 	protected final String taskName;
 	/** The last set value of {@link #setStatus(String)} */
 	protected String status = "";
-	/** The work done */
+	/** The amount of work currently done */
 	protected AtomicLong workDone = new AtomicLong(0);
-	/** The size */
+	/** The size of this monitor in work units, the total work */
 	protected AtomicLong size = new AtomicLong(DEFAULT_SIZE);
-	/** Is the work done - used to ensure we only log our total work once to the parent */
+	/** flag to indicate the work is done - a {@link #latchDone() latched} value used to ensure we only log our total work once to the parent */
 	protected final AtomicBoolean done = new AtomicBoolean(false);
 
 	public AbstractProgressMonitor(final int id, final String name) {
@@ -37,7 +41,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	}
 
 	/**
-	 * Gives an order to this and derive classes.
+	 * Gives an order to this and derived classes.
 	 * Root monitor before all, siblings in ID order, everyone else greater
 	 */
 	@Override
@@ -216,8 +220,27 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	}
 
 	@Override
-	public ProgressMonitor newSubTask(String name, long size) {
-		return new SubTaskProgressMonitor(this, this.childId.getAndIncrement(), size, name);
+	public ProgressMonitor newSubTask(String name, long work) {
+		SubTaskProgressMonitor subTask = new SubTaskProgressMonitor(this, this.childId.getAndIncrement(), work, name);
+		children.add(subTask);
+		return subTask;
+	}
+
+	protected void removeSubTask(SubTaskProgressMonitor subTask) {
+		children.remove(subTask);
+	}
+
+	/**
+	 * Recursive implementation behind {@link BaseProgressMonitor#getAllActive()}
+	 * @param active the list of active monitors to append to
+	 */
+	protected void appendActive(List<ProgressMonitor> active) {
+		if (!isDone()) {
+			active.add(this);
+			for (AbstractProgressMonitor child : children) {
+				child.appendActive(active);
+			}
+		}
 	}
 
 	@Override
@@ -229,4 +252,6 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 				", size=" + size +
 				'}';
 	}
+
+
 }

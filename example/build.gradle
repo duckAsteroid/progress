@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+}
+
+description = 'An example console (System.out) application'
+
+dependencies {
+    compile project(':api')
+    compile project(':client')
+    compile project(':format')
+    compile project(':console')
+}
+
+application {
+    mainClassName = 'org.duck.asteroid.progress.console.ConsoleExample'
+}

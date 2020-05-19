@@ -129,12 +129,14 @@ public interface ProgressMonitor extends Comparable<ProgressMonitor>, Closeable 
 	/**
 	 * Create a sub task of this - which when {@linkplain #isDone() done} equates to the given amount of work in
 	 * this monitor.
+	 * NOTE: The progress of the subtask is not reflected in this monitor until it is {@link #done()}, only then is the
+	 * total work posted on this monitor.
 	 * @param name the name of the sub task
-	 * @param size the relative work this new task contributes to this monitor
+	 * @param work the amount of work the new sub task will contribute to this monitor when done
 	 * @return a new progress monitor for the sub task
 	 * @throws IllegalStateException If this task is already {@link #isDone() done} or is {@link #isCancelled() cancelled}
 	 */
-	ProgressMonitor newSubTask(String name, long size);
+	ProgressMonitor newSubTask(String name, long work);
 
 	/**
 	 * Create a sub task of this - which when {@link #isDone()} equates to a single (1) unit of work in

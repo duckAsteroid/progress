@@ -2,6 +2,9 @@ package org.duck.asteroid.progress.base.format.elements;
 
 import org.duck.asteroid.progress.ProgressMonitor;
 
+/**
+ * Wraps another element in before/after strings
+ */
 public class StringWrapper implements FormatElement {
     private final String before;
     private final String after;
@@ -15,6 +18,10 @@ public class StringWrapper implements FormatElement {
 
     public static StringWrapper prefix(String prefix, FormatElement wrapped) {
         return new StringWrapper(prefix, wrapped, "");
+    }
+
+    public static FormatElement wrap(String before, FormatElement wrap, String after) {
+        return new StringWrapper(before, wrap, after);
     }
 
     @Override

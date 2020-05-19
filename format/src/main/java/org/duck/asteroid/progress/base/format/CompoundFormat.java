@@ -9,13 +9,9 @@ import static org.duck.asteroid.progress.base.format.elements.ProgressBar.BAR_EQ
 import static org.duck.asteroid.progress.base.format.elements.Spinner.SPINNER_SLASHES;
 
 /**
- * Creates a string suitable for "advanced" console output (i.e. not typically supported by IDEs)
- * The string is overwritten by itself when printed without carriage returns (e.g. <code>System.out.print()</code>)
+ * A compound format made up by delegating to a list of {@link FormatElement}s
  */
 public class CompoundFormat implements ProgressFormat {
-    private static boolean valid(char[] c, int minLength) {
-        return c != null && c.length >= minLength;
-    }
 
     private final List<FormatElement> elements = new ArrayList<>(7);
 
@@ -23,7 +19,7 @@ public class CompoundFormat implements ProgressFormat {
                 new TaskName(), StaticString.CONDITIONAL_WHITESPACE,
                 new Spinner(SPINNER_SLASHES), StaticString.WHITESPACE,
                 new Percentage(), StaticString.WHITESPACE,
-                new ProgressBar(50, BAR_EQUALS), StaticString.WHITESPACE,
+                StringWrapper.wrap("[", Colourizer.wrap(new ProgressBar(50, BAR_EQUALS), Colourizer.Color.GREEN), "]"), StaticString.WHITESPACE,
                 new Fraction(), StaticString.WHITESPACE,
                 StringWrapper.prefix("- ", new Status())
         });
