@@ -57,6 +57,6 @@ repositories {
 Then you would add the dependency for the pure API as follows:
 ```groovy
 dependencies {
-    implementation 'com.asteroid.duck.progress:api:1.0.3'
+    implementation 'com.asteroid.duck.progress:api:1.1.0'
 }
 ```
