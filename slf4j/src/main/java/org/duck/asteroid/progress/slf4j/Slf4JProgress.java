@@ -2,23 +2,34 @@ package org.duck.asteroid.progress.slf4j;
 
 import org.duck.asteroid.progress.base.event.ProgressMonitorEvent;
 import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
+import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 import org.duck.asteroid.progress.base.format.ProgressFormat;
 import org.slf4j.Logger;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
+
 /**
- *
+ * A progress monitor listener that reports progress via an SLF4J Logger instance
  */
 public class Slf4JProgress implements ProgressMonitorListener {
+    /** The logger to report to */
     private final Logger logger;
+    /** The format of the logged progress */
     private final ProgressFormat format;
-    private final Level level;
+    /** A level to report to the logger for each event */
+    private final Map<ProgressUpdateType, Level> levels;
 
-    public Slf4JProgress(final Logger logger, final ProgressFormat format, final Level level) {
+    public Slf4JProgress(final Logger logger, final ProgressFormat format, final Map<ProgressUpdateType, Level> level) {
         this.logger = logger;
         this.format = format;
-        this.level = level;
+        this.levels = new EnumMap<>(level);
     }
 
+    /**
+     * Implemented by the log level switch to do enabled and logging
+     */
     interface LogSwitch {
         /**
          * Is this level of logging enabled on the logger
@@ -92,9 +103,13 @@ public class Slf4JProgress implements ProgressMonitorListener {
 
     @Override
     public void logUpdate(final ProgressMonitorEvent evt) {
-        if (level.isEnabled(logger)) {
-            String format = this.format.format(evt.getSource());
-            level.write(logger, format);
+        Optional<Level> optLevel = Optional.ofNullable(levels.get(evt.getType()));
+        if (optLevel.isPresent()) {
+            Level level = optLevel.get();
+            if (level.isEnabled(logger)) {
+                String format = this.format.format(evt.getSource());
+                level.write(logger, format);
+            }
         }
     }
 }

@@ -2,8 +2,10 @@ package org.duck.asteroid.progress.base.format;
 
 import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.format.elements.*;
+import org.duck.asteroid.progress.base.format.parse.FormatParser;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static org.duck.asteroid.progress.base.format.elements.ProgressBar.BAR_EQUALS;
 import static org.duck.asteroid.progress.base.format.elements.Spinner.SPINNER_SLASHES;
@@ -19,7 +21,7 @@ public class CompoundFormat implements ProgressFormat {
                 new TaskName(), StaticString.CONDITIONAL_WHITESPACE,
                 new Spinner(SPINNER_SLASHES), StaticString.WHITESPACE,
                 new Percentage(), StaticString.WHITESPACE,
-                StringWrapper.wrap("[", Colourizer.wrap(new ProgressBar(50, BAR_EQUALS), Colourizer.Color.GREEN), "]"), StaticString.WHITESPACE,
+                StringWrapper.wrap("[", new ProgressBar(50, BAR_EQUALS), "]"), StaticString.WHITESPACE,
                 new Fraction(), StaticString.WHITESPACE,
                 StringWrapper.prefix("- ", new Status())
         });
@@ -39,6 +41,69 @@ public class CompoundFormat implements ProgressFormat {
             fe.appendTo(string, source);
         }
         return string.toString();
+    }
+
+    public List<FormatElement> elements() {
+        return Collections.unmodifiableList(elements);
+    }
+
+    private enum ParseState { TEXT, ENTITY}
+
+    static List<FormatElement> parse(String config, Map<String, Function<String, FormatElement>> helpers) {
+        final Function<String, FormatElement> staticString = (s) -> new StaticString(s);
+        LinkedList<FormatElement> result = new LinkedList<>();
+        StringTokenizer segments = new StringTokenizer(config, "%", true);
+
+        ParseState state = ParseState.TEXT;
+        int pos = 0;
+        while(segments.hasMoreTokens()) {
+            String s = segments.nextToken();
+            pos += s.length();
+            if ("%".equals(s)) {
+                if (state == ParseState.TEXT) {
+                    state = ParseState.ENTITY;
+                }
+                else {
+                    state = ParseState.TEXT;
+                }
+                continue; // skip...
+            }
+
+            switch (state) {
+                case TEXT:
+                    FormatElement string = new StaticString(s);
+                    add(string, result);
+                    break;
+                case ENTITY:
+                    String[] split = s.split(":");
+                    Function<String, FormatElement> elementBuilder = helpers.get(split[0]);
+                    FormatElement formatElement = elementBuilder.apply(split.length > 1 ? split[1] : "");
+                    add(formatElement, result);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static void add(FormatElement formatElement, LinkedList<FormatElement> result) {
+        if (formatElement != null) {
+            if (result.size() > 0) {
+                FormatElement previous = result.getLast();
+                if (previous instanceof FormatElement.Wrapping) {
+                    // already wrapping?
+                    if (!((FormatElement.Wrapping) previous).isWrapping()) {
+                        ((FormatElement.Wrapping) previous).setWrapped(formatElement);
+                        return;
+                    }
+                }
+            }
+            // add the
+            result.add(formatElement);
+        }
+    }
+
+    public static CompoundFormat parse(String s) {
+        return new CompoundFormat(parse(s, FormatParser.loadParsers()));
     }
 
 }

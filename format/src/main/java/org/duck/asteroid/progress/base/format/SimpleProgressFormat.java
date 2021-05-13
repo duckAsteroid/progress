@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class SimpleProgressFormat implements ProgressFormat {
 	/** A default (everything on) format for monitors */
-	public static final ProgressFormat DEFAULT = createSimpleProgressFormat(true, true, true, true, true);
+	public static final ProgressFormat DEFAULT = createSimpleProgressFormat(true, true, true, true, true, true);
 
 	/** include a <code>&gt;</code> separated list of parents */
 	private final boolean showParents;
@@ -27,7 +27,7 @@ public class SimpleProgressFormat implements ProgressFormat {
 	protected static final NumberFormat PERCENT_FMT = NumberFormat.getPercentInstance();
 
 	public static SimpleProgressFormat createSimpleProgressFormat(boolean showParents, boolean showTask, boolean showWork,
-																  boolean showPercent, boolean showStatus) {
+																  boolean showUnit, boolean showPercent, boolean showStatus) {
 		ArrayList<FormatElement> elements = new ArrayList(8);
 		if (showTask) {
 			elements.add(new TaskName());
@@ -37,6 +37,12 @@ public class SimpleProgressFormat implements ProgressFormat {
 				elements.add(StaticString.CONDITIONAL_WHITESPACE);
 			}
 			elements.add(new StringWrapper("[", new Fraction(), "]"));
+		}
+		if (showUnit) {
+			if (!elements.isEmpty()){
+				elements.add(StaticString.CONDITIONAL_WHITESPACE);
+			}
+			elements.add(new Unit());
 		}
 		if (showPercent) {
 			if (!elements.isEmpty()){

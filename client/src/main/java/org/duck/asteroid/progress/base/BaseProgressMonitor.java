@@ -6,6 +6,7 @@ import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
 import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,7 +23,7 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 	protected AtomicBoolean cancelled = new AtomicBoolean(false);
 
 	/** A set of listeners */
-	protected CopyOnWriteArrayList<ProgressMonitorListener> listeners = new CopyOnWriteArrayList<>();
+	protected final List<ProgressMonitorListener> listeners = new CopyOnWriteArrayList<>();
 
 	public BaseProgressMonitor() {
 		this("");
@@ -35,6 +36,12 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 	public BaseProgressMonitor(final String name, final long size) {
 		this(name);
 		this.setSize(size);
+	}
+
+	public BaseProgressMonitor(final String name, final long size, Collection<ProgressMonitorListener> listeners) {
+		this(name);
+		this.setSize(size);
+		this.listeners.addAll(listeners);
 	}
 
 	public BaseProgressMonitor(final long size) {

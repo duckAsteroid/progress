@@ -3,7 +3,6 @@ package org.duck.asteroid.progress.base;
 import org.duck.asteroid.progress.ProgressMonitor;
 import org.duck.asteroid.progress.base.event.ProgressUpdateType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,6 +31,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	protected AtomicLong workDone = new AtomicLong(0);
 	/** The size of this monitor in work units, the total work */
 	protected AtomicLong size = new AtomicLong(DEFAULT_SIZE);
+	/** The unit of work in this monitor (default empty) */
+	protected String unit = "";
 	/** flag to indicate the work is done - a {@link #latchDone() latched} value used to ensure we only log our total work once to the parent */
 	protected final AtomicBoolean done = new AtomicBoolean(false);
 
@@ -82,6 +83,16 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	@Override
 	public String getStatus() {
 		return status;
+	}
+
+	@Override
+	public String getUnit() {
+		return unit;
+	}
+
+	@Override
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 
 	@Override

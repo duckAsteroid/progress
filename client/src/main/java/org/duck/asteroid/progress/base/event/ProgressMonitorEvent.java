@@ -6,10 +6,10 @@ import org.duck.asteroid.progress.base.BaseProgressMonitor;
 import java.util.Objects;
 
 /**
- * A simple event class
+ * A simple event class to transfer progress from a monitor to a listener
  */
 public class ProgressMonitorEvent {
-    /** the monitor that caused the update */
+    /** the monitor (possibly a child of the root) that caused the update */
     private final ProgressMonitor source;
     /** the root monitor that generated the event */
     private final BaseProgressMonitor root;

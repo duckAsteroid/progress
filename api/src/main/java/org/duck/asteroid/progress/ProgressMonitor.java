@@ -66,6 +66,18 @@ public interface ProgressMonitor extends Comparable<ProgressMonitor>, Closeable 
 	void setSize(long size);
 
 	/**
+	 * The unit of work in this monitor (default empty).
+	 * Sub tasks will inherit this unit.
+	 */
+	String getUnit();
+
+	/**
+	 * Modify the unit of this task, only new subtasks will pick up this unit.
+	 * @param unit the new unit
+	 */
+	void setUnit(String unit);
+
+	/**
 	 * The current amount of work done. This is always a positive number or zero.
 	 * It may be more than the size of this task (which simply means the task is done)
 	 * @return the current amount of work done

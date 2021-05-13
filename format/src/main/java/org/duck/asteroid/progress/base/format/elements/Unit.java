@@ -3,13 +3,13 @@ package org.duck.asteroid.progress.base.format.elements;
 import org.duck.asteroid.progress.ProgressMonitor;
 
 /**
- * Adds the monitor status message to the output
+ * Adds the monitor unit to the output
  */
-public class Status implements FormatElement {
+public class Unit implements FormatElement {
     @Override
     public void appendTo(StringBuilder sb, ProgressMonitor monitor) {
         if (hasContent(monitor)) {
-            sb.append(Utils.sanitize(monitor.getStatus()));
+            sb.append(Utils.sanitize(monitor.getUnit()));
         }
     }
 
@@ -17,7 +17,7 @@ public class Status implements FormatElement {
     public boolean hasContent(ProgressMonitor monitor) {
         if (monitor == null) return false;
 
-        String status = monitor.getStatus();
-        return Utils.notEmpty(status);
+        String unit = monitor.getUnit();
+        return Utils.notEmpty(unit);
     }
 }

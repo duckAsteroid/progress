@@ -1,6 +1,7 @@
 package org.duck.asteroid.progress.console;
 
 import org.duck.asteroid.progress.ProgressMonitor;
+import org.duck.asteroid.progress.ProgressMonitorFactory;
 import org.duck.asteroid.progress.base.format.CompoundFormat;
 
 import java.util.Date;
@@ -16,8 +17,7 @@ public class ConsoleExample {
     public static void main(String[] args)  {
         boolean multiline = args.length > 0 ? Boolean.parseBoolean(args[0]) : true;
         int delay = args.length > 1 ? Integer.parseInt(args[1]) : 250;
-        ProgressMonitor monitor = ConsoleProgress.createConsoleMonitor(CompoundFormat.MAXIMAL, multiline);
-        monitor.setSize(2);
+        ProgressMonitor monitor = ProgressMonitorFactory.newMonitor(ConsoleExample.class.getName(), 2);
         for(int i = 0; i < 2; i ++) {
             ProgressMonitor subTask = monitor.newSubTask("L1:"+i, 1);
             subTask.setSize(3);

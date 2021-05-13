@@ -15,18 +15,24 @@ import java.util.concurrent.Semaphore;
 /**
  * A simple progress monitor that writes all progress to the console
  */
+// FIXME Only log for max depth X of monitors?
+// FIXME Use config to setup the format and the colouring
 public class ConsoleProgress implements ProgressMonitorListener {
 	public static final String CLEAR_LINE = "\033[2K";
 	public static final String CURSOR_UP_1 = "\033[1A";
 	public static final String CURSOR_DOWN_1 = "\033[1B";
 	public static final String ERASE_DOWN = "\033[J";
 
+	/** The target output stream for this */
 	private final PrintStream output;
+	/** Formatter to use for events */
 	private final ProgressFormat formatter;
 	/** Print all active monitors - or just the updated */
 	private final boolean multiline;
 
+	/** used to permit one thread at a time to update the console */
 	private Semaphore semaphore = new Semaphore(1, false);
+	/** A cache of the console commands required to erase the last output */
 	private StringBuilder eraser = new StringBuilder();
 
 	public ConsoleProgress(PrintStream output, ProgressFormat formatter, boolean multiline) {
@@ -38,8 +44,9 @@ public class ConsoleProgress implements ProgressMonitorListener {
 	@Override
 	public void logUpdate(final ProgressMonitorEvent event) {
 		// permits only one thread to update the console
-		// or the formatting goes to hell
+		// (or the formatting goes to hell)
 		if (semaphore.tryAcquire()) {
+			// only one thread in here at a time - any others concurrently are ignored
 			try {
 				outputToConsole(event);
 			} finally {
@@ -51,6 +58,7 @@ public class ConsoleProgress implements ProgressMonitorListener {
 	private void outputToConsole(ProgressMonitorEvent event) {
 		if (event.getType() != ProgressUpdateType.DONE) {
 			List<ProgressMonitor> toPrint;
+			// FIXME implement max depth... == 1?
 			if (multiline) {
 				toPrint = event.getRoot().getAllActive();
 			} else {

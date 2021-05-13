@@ -23,4 +23,12 @@ public interface FormatElement {
     default boolean hasContent(ProgressMonitor monitor) {
         return true;
     }
+
+    /**
+     * A kind of element that wraps another element
+     */
+    interface Wrapping extends FormatElement {
+        void setWrapped(FormatElement element);
+        boolean isWrapping();
+    }
 }
