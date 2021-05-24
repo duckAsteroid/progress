@@ -33,12 +33,12 @@ public class ProgressFormatTest {
 	public void testFormat() {
 		ProgressFormat f = SimpleProgressFormat.DEFAULT;
 		String result = f.format(subTask);
-		assertEquals("[ 0/10] (  0%) - > SubTask [ 50/100] ( 50%) - Half", result);
+		assertEquals("[ 0/10]  (  0%) - > SubTask [ 50/100]  ( 50%) - Half", result);
 		result = f.format(subject);
-		assertEquals("[ 0/10] (  0%) - ", result);
+		assertEquals("[ 0/10]  (  0%) - ", result);
 		subTask.done();
 		result = f.format(subject);
-		assertEquals("[ 4/10] ( 40%) - SubTask", result);
+		assertEquals("[ 4/10]  ( 40%) - SubTask", result);
 	}
 
 }

@@ -7,7 +7,7 @@ description = 'Java progress reporting library'
 
 allprojects {
     group = 'com.asteroid.duck.progress'
-    version = '1.2.0-RC1'
+    version = '1.2.0-RC2'
 }
 
 subprojects {
