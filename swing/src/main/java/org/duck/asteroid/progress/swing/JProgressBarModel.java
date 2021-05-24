@@ -7,6 +7,9 @@ import org.duck.asteroid.progress.base.event.ProgressMonitorListener;
 
 import javax.swing.*;
 
+/**
+ * A progress bar model - that can be used with a {@link JProgressBar}.
+ */
 public class JProgressBarModel extends DefaultBoundedRangeModel implements ProgressMonitorListener {
     private String status;
 

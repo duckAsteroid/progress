@@ -1,4 +1,4 @@
-description = 'A console (System.out) implementation of progress reporting'
+description = 'A Java Swing ready implementation of progress reporting'
 
 dependencies {
     compile project(':api')
