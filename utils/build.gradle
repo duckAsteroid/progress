@@ -1,6 +1,8 @@
 description = 'Utility classes to help use ProgressMonitors in code'
 
 dependencies {
-    compile project(':api')
-    testCompile project(':console')
+    implementation project(':api')
+    testImplementation project(':format')
+    testImplementation project(':client')
+    testImplementation project(':console')
 }

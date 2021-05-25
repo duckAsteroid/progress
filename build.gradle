@@ -19,11 +19,17 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-
     }
 
     dependencies {
-        testCompile 'junit:junit:4.+'
+        testImplementation 'junit:junit:4.12'
+
+        // testImplementation(platform('org.junit:junit-bom:5.7.2'))
+        // testImplementation('org.junit.jupiter:junit-jupiter')
+    }
+
+    test {
+        // useJUnitPlatform()
     }
 
     /* Test coverage */
@@ -55,7 +61,7 @@ subprojects {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/octocat/hello-world"
+                url = "https://maven.pkg.github.com/duckAsteroid/progress"
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")

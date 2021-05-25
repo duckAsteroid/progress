@@ -1,9 +1,9 @@
 description = 'A console (System.out) implementation of progress reporting'
 
 dependencies {
-    compile project(':api')
-    compile project(':client')
-    compile project(':format')
+    implementation project(':api')
+    implementation project(':client')
+    implementation project(':format')
 }
 
 task runJava(type: JavaExec, dependsOn:[testClasses]) {

@@ -5,10 +5,10 @@ plugins {
 description = 'An example console (System.out) application'
 
 dependencies {
-    compile project(':api')
-    compile project(':client')
-    compile project(':format')
-    compile project(':console')
+    implementation project(':api')
+    implementation project(':client')
+    implementation project(':format')
+    implementation project(':console')
 }
 
 application {
