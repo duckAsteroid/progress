@@ -1,0 +1,49 @@
+plugins {
+    id 'jacoco'
+    id 'java'
+    id 'maven-publish'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_9
+targetCompatibility = JavaVersion.VERSION_1_9
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+/* Test coverage */
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+/* sonarqube cloud
+//apply plugin: 'org.sonarqube'
+sonarqube {
+    properties {
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+*/
+
+/* Add ability to publish JARs to Maven Central */
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            pom {
+                description = project.description
+            }
+        }
+    }
+}
+

@@ -1,3 +1,6 @@
+plugins {
+    id 'duckasteroid'
+}
 description = "A progress implementation for SLF4J"
 
 dependencies {

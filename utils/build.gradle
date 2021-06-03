@@ -1,3 +1,6 @@
+plugins {
+    id 'duckasteroid'
+}
 description = 'Utility classes to help use ProgressMonitors in code'
 
 dependencies {

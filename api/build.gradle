@@ -1,1 +1,23 @@
+plugins {
+    id 'java'
+    id 'duckasteroid'
+}
 description = 'API for progress reporting'
+// TODO pull out POM config into shared build plugin https://docs.gradle.org/current/samples/sample_convention_plugins.html
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    // testImplementation(platform('org.junit:junit-bom:5.7.2'))
+    // testImplementation('org.junit.jupiter:junit-jupiter')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+/* Maven JARs require a signature */
+apply plugin: 'signing'
+signing {
+    sign publishing.publications.maven
+}

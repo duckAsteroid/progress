@@ -1,3 +1,6 @@
+plugins {
+    id 'duckasteroid'
+}
 description = "Utility library for turning ProgressMonitor into String"
 dependencies {
     implementation project(':api')

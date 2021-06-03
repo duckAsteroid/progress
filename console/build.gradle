@@ -1,3 +1,6 @@
+plugins {
+    id 'duckasteroid'
+}
 description = 'A console (System.out) implementation of progress reporting'
 
 dependencies {

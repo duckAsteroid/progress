@@ -2,7 +2,7 @@ package io.github.duckasteroid.progress.base.format;
 
 import io.github.duckasteroid.progress.base.format.elements.*;
 import io.github.duckasteroid.progress.ProgressMonitor;
-import org.duck.asteroid.progress.base.format.elements.*;
+import io.github.duckasteroid.progress.base.format.elements.*;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

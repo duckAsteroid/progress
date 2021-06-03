@@ -1,3 +1,6 @@
+plugins {
+    id 'duckasteroid'
+}
 description = 'A Java logging framework implementation of progress reporting'
 
 dependencies {
