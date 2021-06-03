@@ -8,4 +8,5 @@ dependencies {
     testImplementation project(':format')
     testImplementation project(':client')
     testImplementation project(':console')
+    testImplementation 'junit:junit:4.12'
 }

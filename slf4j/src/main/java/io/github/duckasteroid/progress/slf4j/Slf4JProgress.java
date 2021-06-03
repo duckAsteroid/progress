@@ -40,8 +40,8 @@ public class Slf4JProgress implements ProgressMonitorListener {
 
         /**
          * Write a log message at this level
-         * @param logger
-         * @param message
+         * @param logger the logger to write to
+         * @param message the message to log
          */
         void write(Logger logger, String message);
     }

@@ -16,7 +16,7 @@ public interface FormatElement {
 
     /**
      * Does this element produce any output for the given monitor
-     * @param monitor
+     * @param monitor the monitor to test for output
      * @return true if calling {@link #appendTo(StringBuilder, ProgressMonitor)} would
      * result in output
      */

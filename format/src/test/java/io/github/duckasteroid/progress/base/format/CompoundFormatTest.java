@@ -1,7 +1,7 @@
 package io.github.duckasteroid.progress.base.format;
 
 import io.github.duckasteroid.progress.base.format.elements.*;
-import org.duck.asteroid.progress.base.format.elements.*;
+import io.github.duckasteroid.progress.base.format.elements.*;
 import org.junit.Test;
 
 import java.util.List;

@@ -5,4 +5,5 @@ description = "Utility library for turning ProgressMonitor into String"
 dependencies {
     implementation project(':api')
     testImplementation project(':client')
+    testImplementation 'junit:junit:4.12'
 }
