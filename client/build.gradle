@@ -5,10 +5,10 @@ description = 'Client library for framework reporting'
 
 dependencies {
     implementation project(':api')
-    testImplementation 'junit:junit:4.12'
+    testImplementation(libs.junit)
 
     // Mockito
-    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation(libs.mockito)
 }
 
 

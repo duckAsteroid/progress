@@ -7,7 +7,7 @@ dependencies {
     implementation project(':api')
     implementation project(':client')
     implementation project(':format')
-    testImplementation 'junit:junit:4.12'
+    testImplementation(libs.junit)
 }
 
 task runJava(type: JavaExec, dependsOn:[testClasses]) {
