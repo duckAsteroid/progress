@@ -4,8 +4,12 @@ import io.github.duckasteroid.progress.ProgressMonitor;
 import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
 import io.github.duckasteroid.progress.console.ConsoleProgress;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Objects;
+import java.util.OptionalDouble;
+import java.util.Random;
+import java.util.Spliterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class SpliteratorProgressTest {
 

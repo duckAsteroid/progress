@@ -2,7 +2,7 @@ package io.github.duckasteroid.progress.base;
 
 import io.github.duckasteroid.progress.ProgressMonitor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * A helper for doing assertions on a {@link ProgressMonitor}

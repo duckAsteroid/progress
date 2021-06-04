@@ -1,10 +1,10 @@
 package io.github.duckasteroid.progress.console;
 
-import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
 import io.github.duckasteroid.progress.Configuration;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.format.CompoundFormat;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
+import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
 
 import java.io.PrintStream;
 

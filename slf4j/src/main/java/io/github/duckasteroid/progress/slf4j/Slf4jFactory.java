@@ -1,13 +1,13 @@
 package io.github.duckasteroid.progress.slf4j;
 
+import io.github.duckasteroid.progress.Configuration;
 import io.github.duckasteroid.progress.ProgressMonitor;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListenerFactory;
 import io.github.duckasteroid.progress.base.event.ProgressUpdateType;
-import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
-import io.github.duckasteroid.progress.Configuration;
 import io.github.duckasteroid.progress.base.format.CompoundFormat;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
+import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

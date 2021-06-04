@@ -19,3 +19,4 @@ hs_err_pid*
 **/build/
 !/gradle/wrapper/gradle-wrapper.jar
 
+/buildSrc/.gradle/

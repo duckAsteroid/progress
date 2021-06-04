@@ -1,11 +1,11 @@
 package io.github.duckasteroid.progress.console;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import io.github.duckasteroid.progress.base.event.ProgressMonitorEvent;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A Java logging progress

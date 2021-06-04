@@ -8,7 +8,8 @@ import io.github.duckasteroid.progress.base.event.ProgressUpdateType;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**

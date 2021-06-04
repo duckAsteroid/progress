@@ -2,9 +2,9 @@ package io.github.duckasteroid.progress.swing;
 
 
 import io.github.duckasteroid.progress.ProgressMonitor;
+import io.github.duckasteroid.progress.base.BaseProgressMonitor;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorEvent;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
-import io.github.duckasteroid.progress.base.BaseProgressMonitor;
 
 import java.awt.*;
 

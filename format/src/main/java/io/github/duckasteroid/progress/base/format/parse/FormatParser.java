@@ -2,7 +2,9 @@ package io.github.duckasteroid.progress.base.format.parse;
 
 import io.github.duckasteroid.progress.base.format.elements.FormatElement;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
