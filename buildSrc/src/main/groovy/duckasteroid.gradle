@@ -24,11 +24,21 @@ jacocoTestReport {
 
 // Use the Checkstyle rules provided by the convention plugin
 // Do not allow any warnings
-checkstyle {
-    config = resources.text.fromString(io.github.duckasteroid.build.CheckstyleUtil.getCheckstyleConfig("/checkstyle.xml"))
-    maxWarnings = 0
+configurations {
+    checkstyleConfig
 }
 
+dependencies {
+    checkstyleConfig("com.puppycrawl.tools:checkstyle:8.29") { transitive = false }
+}
+
+checkstyle {
+    toolVersion '8.29'
+    config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
+    maxWarnings = 2000
+}
+
+// configure PMD to output failures to console
 pmd {
     consoleOutput = true
 }
