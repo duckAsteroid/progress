@@ -1,7 +1,6 @@
 package io.github.duckasteroid.progress.utils;
 
 import io.github.duckasteroid.progress.ProgressMonitor;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,23 +11,23 @@ import java.io.InputStream;
  * When the stream is {@link #close() closed} the monitor is marked done
  */
 public class InputStreamProgress extends InputStream {
-    private transient final InputStream delegate;
-    private transient final ProgressMonitor monitor;
+  private final transient  InputStream delegate;
+  private final transient ProgressMonitor monitor;
 
-    public InputStreamProgress(InputStream delegate, ProgressMonitor monitor) {
-        this.delegate = delegate;
-        this.monitor = monitor;
-    }
+  public InputStreamProgress(InputStream delegate, ProgressMonitor monitor) {
+    this.delegate = delegate;
+    this.monitor = monitor;
+  }
 
-    @Override
-    public int read() throws IOException {
-        monitor.worked(1);
-        return delegate.read();
-    }
+  @Override
+  public int read() throws IOException {
+    monitor.worked(1);
+    return delegate.read();
+  }
 
-    @Override
-    public void close() throws IOException {
-        monitor.done();
-        super.close();
-    }
+  @Override
+  public void close() throws IOException {
+    monitor.done();
+    super.close();
+  }
 }

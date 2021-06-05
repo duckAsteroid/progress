@@ -11,7 +11,7 @@ dependencies {
 
 }
 
-task runJava(type: JavaExec, dependsOn:[testClasses]) {
+task runJava(type: JavaExec, dependsOn: [testClasses]) {
     main = 'org.duck.asteroid.progress.console.ConsoleProgressTest'
     classpath = sourceSets.test.runtimeClasspath
     args 'true', '500'

@@ -8,5 +8,5 @@ dependencies {
     testImplementation project(':format')
     testImplementation project(':client')
     testImplementation project(':console')
-    testImplementation (libs.junit)
+    testImplementation(libs.junit)
 }

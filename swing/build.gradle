@@ -10,7 +10,7 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-task runJava(type: JavaExec, dependsOn:[testClasses]) {
+task runJava(type: JavaExec, dependsOn: [testClasses]) {
     main = 'org.duck.asteroid.progress.swing.SwingProgressTest'
     classpath = sourceSets.test.runtimeClasspath
     args 'false', '500'

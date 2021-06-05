@@ -3,7 +3,6 @@ package io.github.duckasteroid.progress;
 import io.github.duckasteroid.progress.base.BaseProgressMonitor;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListenerFactory;
-
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,39 +15,47 @@ import java.util.stream.Collectors;
  * {@link ServiceLoader} discovery.
  */
 public class ProgressMonitorFactory {
-    private static List<ProgressMonitorListener> listeners = fromServiceLoader();
+  private static List<ProgressMonitorListener> listeners = fromServiceLoader();
 
-    private static List<ProgressMonitorListener> fromServiceLoader() {
-        ServiceLoader<ProgressMonitorListener> listenerServiceLoader = ServiceLoader.load(ProgressMonitorListener.class);
-        List<ProgressMonitorListener> tmp = listenerServiceLoader.stream().map(p -> p.get()).collect(Collectors.toList());
-        if (tmp.isEmpty()) {
-            System.err.println("Bad configuration - no ProgressMonitorListeners found");
-        }
-        return new CopyOnWriteArrayList<>(tmp);
+  private static List<ProgressMonitorListener> fromServiceLoader() {
+    ServiceLoader<ProgressMonitorListener> listenerServiceLoader =
+        ServiceLoader.load(ProgressMonitorListener.class);
+    List<ProgressMonitorListener> tmp =
+        listenerServiceLoader.stream().map(p -> p.get()).collect(Collectors.toList());
+    if (tmp.isEmpty()) {
+      System.err.println("Bad configuration - no ProgressMonitorListeners found");
     }
+    return new CopyOnWriteArrayList<>(tmp);
+  }
 
-    public static void addListener(ProgressMonitorListener listener) {
-        listeners.add(listener);
-    }
+  public static void addListener(ProgressMonitorListener listener) {
+    listeners.add(listener);
+  }
 
-    public static void removeListener(ProgressMonitorListener listener) {
-        listeners.remove(listener);
-    }
+  public static void removeListener(ProgressMonitorListener listener) {
+    listeners.remove(listener);
+  }
 
-    public static void clearListeners() {
-        listeners.clear();
-    }
+  public static void clearListeners() {
+    listeners.clear();
+  }
 
-    public static void resetListeners() {
-        listeners = fromServiceLoader();
-    }
+  public static void resetListeners() {
+    listeners = fromServiceLoader();
+  }
 
-    public static final ProgressMonitor newMonitor(String name, long size) {
-        BaseProgressMonitor monitor = new BaseProgressMonitor(name, size, listeners);
-        ServiceLoader.load(ProgressMonitorListenerFactory.class).stream()
-                .map(ServiceLoader.Provider::get)
-                .map(fac -> fac.createProgressMonitorListener(name))
-                .forEach(monitor::addProgressMonitorListener);
-        return monitor;
-    }
+  /**
+   * Create a new progress monitor using system wide settings.
+   * @param name the name of the monitor
+   * @param size the amount of work in the new monitor
+   * @return the new monitor (never null)
+   */
+  public static final ProgressMonitor newMonitor(String name, long size) {
+    BaseProgressMonitor monitor = new BaseProgressMonitor(name, size, listeners);
+    ServiceLoader.load(ProgressMonitorListenerFactory.class).stream()
+        .map(ServiceLoader.Provider::get)
+        .map(fac -> fac.createProgressMonitorListener(name))
+        .forEach(monitor::addProgressMonitorListener);
+    return monitor;
+  }
 }
