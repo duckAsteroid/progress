@@ -24,6 +24,7 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 	/**
 	 * Create a sub task for a given parent monitor
 	 * @param parent The parent to report on
+	 * @param id The id of this sub task
 	 * @param totalParentWork The total work in the parent that this complete task represents
 	 * @param name The name of this task
 	 */

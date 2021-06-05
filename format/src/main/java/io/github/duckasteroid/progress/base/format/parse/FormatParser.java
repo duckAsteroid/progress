@@ -23,6 +23,7 @@ public interface FormatParser {
 
     /**
      * Load the registered parsers using {@link ServiceLoader}
+     * @return A map of the parsers keyed by their tag names
      */
     static Map<String, Function<String, FormatElement>> loadParsers() {
         ServiceLoader<FormatParser> serviceLoader = ServiceLoader.load(FormatParser.class);

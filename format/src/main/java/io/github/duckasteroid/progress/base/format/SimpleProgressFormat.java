@@ -3,7 +3,6 @@ package io.github.duckasteroid.progress.base.format;
 import io.github.duckasteroid.progress.ProgressMonitor;
 import io.github.duckasteroid.progress.base.format.elements.*;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
@@ -16,19 +15,17 @@ public class SimpleProgressFormat implements ProgressFormat {
 	/** include a <code>&gt;</code> separated list of parents */
 	private final boolean showParents;
 
-	private ProgressFormat format;
+	private final ProgressFormat format;
 	
 	private SimpleProgressFormat(boolean showParents, ProgressFormat format) {
 		this.showParents = showParents;
 		this.format = format;
 	}
 
-	/** A number format for percentages */
-	protected static final NumberFormat PERCENT_FMT = NumberFormat.getPercentInstance();
 
 	public static SimpleProgressFormat createSimpleProgressFormat(boolean showParents, boolean showTask, boolean showWork,
 																  boolean showUnit, boolean showPercent, boolean showStatus) {
-		ArrayList<FormatElement> elements = new ArrayList(8);
+		ArrayList<FormatElement> elements = new ArrayList<>(8);
 		if (showTask) {
 			elements.add(new TaskName());
 		}

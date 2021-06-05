@@ -8,10 +8,23 @@ import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
 
 import java.io.PrintStream;
 
+/**
+ * A service loader provider of a progress monitor listener that uses console.
+ * The instance can be configured via the parameters:
+ * <ul>
+ *     <li><pre>org.duck.asteroid.progress.console.output</pre>Use <pre>err</pre> for System err, otherwise System out
+ *     (default)</li>
+ *     <li><pre>org.duck.asteroid.progress.console.format</pre>Format string for {@link CompoundFormat#parse(String)}.
+ *     Default is {@link SimpleProgressFormat#DEFAULT}</li>
+ *     <li><pre>org.duck.asteroid.progress.console.multiline</pre>Is the output single line or multi line (boolean).
+ *     Default is false</li>
+ * </ul>
+ */
 public class DefaultConsoleProvider {
     private static final String NAMESPACE = "org.duck.asteroid.progress.console.";
     /**
      * @see java.util.ServiceLoader
+     * @return Instance of progress monitor listener that directs to console.
      */
     public static ProgressMonitorListener provide() {
         // FIXME Read configuration for output, and format

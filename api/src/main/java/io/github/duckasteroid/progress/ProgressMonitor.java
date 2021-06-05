@@ -68,6 +68,7 @@ public interface ProgressMonitor extends Comparable<ProgressMonitor>, Closeable 
 	/**
 	 * The unit of work in this monitor (default empty).
 	 * Sub tasks will inherit this unit.
+	 * @return the unit as set in {@link #setUnit(String)}
 	 */
 	String getUnit();
 

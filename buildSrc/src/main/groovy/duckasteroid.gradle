@@ -2,6 +2,7 @@ plugins {
     id 'jacoco'
     id 'java'
     id 'maven-publish'
+    id 'signing'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_9
@@ -37,15 +38,60 @@ java {
     withSourcesJar()
 }
 
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
 
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+/* Configure the publication so that all appropriate meta data ends up in the POM as required by Maven central */
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
             pom {
                 description = project.description
+                url = 'http://duckasteroid.github.io/progress/'
+                scm {
+                    connection ='scm:git:git://github.com/duckAsteroid/progress.git'
+                    developerConnection ='scm:git:ssh://github.com:duckAsteroid/progress.git'
+                    url ='https://github.com/duckAsteroid/progress/tree/master'
+                }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'duckAsteroid'
+                        name = 'Chris Senior'
+                        email ='christopher.senior@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
 }
 
+signing {
+    sign publishing.publications.mavenJava
+}

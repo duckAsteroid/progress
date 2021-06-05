@@ -2,7 +2,7 @@ description = 'Java progress reporting library'
 
 allprojects {
     group = 'io.github.duckasteroid.progress'
-    version = '1.2.0-RC4'
+    version = '1.2.0-SNAPSHOT'
 }
 
 
