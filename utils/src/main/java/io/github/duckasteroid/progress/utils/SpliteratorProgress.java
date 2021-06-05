@@ -6,12 +6,13 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class SpliteratorProgress<T> implements Spliterator<T>, AutoCloseable {
-    private Spliterator<T> underlying;
-    private ProgressMonitor monitor;
-    private Set<Spliterator<T>> openChildSpliterators;
+    private transient Spliterator<T> underlying;
+    private transient ProgressMonitor monitor;
+    private transient Set<Spliterator<T>> openChildSpliterators;
 
     public SpliteratorProgress(Spliterator<T> underlying, ProgressMonitor monitor) {
-        this(underlying, monitor, Collections.synchronizedSet(new HashSet<>())); // has to be synchronized
+        this(underlying, monitor,  // NOPMD
+                Collections.synchronizedSet(new HashSet<>())); // has to be synchronized
     }
 
     private SpliteratorProgress(Spliterator<T> underlying, ProgressMonitor monitor, Set<Spliterator<T>> openChildren) {

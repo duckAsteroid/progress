@@ -14,7 +14,7 @@ import static io.github.duckasteroid.progress.base.format.elements.ProgressBar.B
  */
 public class CompoundFormat implements ProgressFormat {
 
-    private final List<FormatElement> elements = new ArrayList<>(7);
+    private final List<FormatElement> elements = new ArrayList<>(7); //NOPMD - method clash
 
     public static CompoundFormat MAXIMAL = new CompoundFormat( new FormatElement[]{
                 new TaskName(), StaticString.CONDITIONAL_WHITESPACE,
@@ -48,8 +48,8 @@ public class CompoundFormat implements ProgressFormat {
 
     private enum ParseState { TEXT, ENTITY}
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     static List<FormatElement> parse(String config, Map<String, Function<String, FormatElement>> helpers) {
-        final Function<String, FormatElement> staticString = (s) -> new StaticString(s);
         LinkedList<FormatElement> result = new LinkedList<>();
         StringTokenizer segments = new StringTokenizer(config, "%", true);
 

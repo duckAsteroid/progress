@@ -1,6 +1,8 @@
 plugins {
-    id 'jacoco'
     id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'pmd'
     id 'maven-publish'
     id 'signing'
 }
@@ -13,14 +15,22 @@ repositories {
     mavenLocal()
 }
 
-
-
-
 /* Test coverage */
 jacocoTestReport {
     reports {
         xml.enabled true
     }
+}
+
+// Use the Checkstyle rules provided by the convention plugin
+// Do not allow any warnings
+checkstyle {
+    config = resources.text.fromString(io.github.duckasteroid.build.CheckstyleUtil.getCheckstyleConfig("/checkstyle.xml"))
+    maxWarnings = 0
+}
+
+pmd {
+    consoleOutput = true
 }
 
 /* sonarqube cloud

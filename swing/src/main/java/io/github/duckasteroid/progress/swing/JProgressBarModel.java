@@ -11,7 +11,8 @@ import javax.swing.*;
  * A progress bar model - that can be used with a {@link JProgressBar}.
  */
 public class JProgressBarModel extends DefaultBoundedRangeModel implements ProgressMonitorListener {
-    private String status;
+    private static final long serialVersionUID = -1659525008252981826L;
+    private transient String status;
 
     public static ProgressMonitor newMonitor(JProgressBar bar, String taskName, int totalWork) {
         BaseProgressMonitor monitor = new BaseProgressMonitor(taskName, totalWork);

@@ -33,9 +33,9 @@ public class Colourizer implements FormatElement.Wrapping {
 
     public static final String RESET_COLOR = "\033[0m";
 
-    private final String ansiColorCode;
+    private transient final String ansiColorCode;
 
-    private FormatElement wrapped;
+    private transient FormatElement wrapped;
 
     public static Colourizer wrap(FormatElement element, Color c) {
         return new Colourizer(c.code, element);

@@ -10,22 +10,24 @@ import java.util.Arrays;
 public class ProgressBar implements FormatElement {
     /** A bar pattern like this: <code>====&gt;   </code> */
     public static final char[] BAR_EQUALS = new char[] {'=', '>', ' '};
+    private static final int MIN_WIDTH = 1;
+    private static final int MIN_BAR_CHARS = 3;
 
     /** show a "fake" character progress bar using the first 3 chars from this array */
-    private final char[] barChars;
-    private final String fullBar;
-    private final String emptyBar;
+    private transient final char[] barChars;
+    private transient final String fullBar;
+    private transient final String emptyBar;
 
     /** how wide (in characters) to make the formatted message */
-    private final int width;
+    private transient final int width;
 
     public ProgressBar(int width, char[] barChars ) {
-        if (width <= 1)
+        if (width <= MIN_WIDTH)
             throw new IllegalArgumentException("Width must be > 1");
         this.width = width;
         this.barChars = barChars;
         if (barChars != null) {
-            if (barChars.length >= 3) {
+            if (barChars.length >= MIN_BAR_CHARS) {
                 // create full length strings for the bar to avoid doing on every progress update
                 char[] tmp = new char[width];
                 Arrays.fill(tmp, barChars[0]);
@@ -44,7 +46,7 @@ public class ProgressBar implements FormatElement {
 
     @Override
     public void appendTo(StringBuilder sb, ProgressMonitor monitor) {
-        int percent = Math.max(0, (int) (monitor.getWorkDone() * width / monitor.getSize()));;
+        int percent = Math.max(0, (int) (monitor.getWorkDone() * width / monitor.getSize()));
         sb.append(fullBar.substring(width - percent))
             .append(barChars[1])
             .append(emptyBar.substring(percent));

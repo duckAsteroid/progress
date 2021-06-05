@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class IteratorProgress<E> implements Iterator<E> {
-    private final Iterator<E> delegate;
-    private final ProgressMonitor monitor;
+    private transient final Iterator<E> delegate;
+    private transient final ProgressMonitor monitor;
 
     public static <E> Iterator<E> iterator(Collection<E> collection, ProgressMonitor monitor) {
         monitor.setSize(collection.size());

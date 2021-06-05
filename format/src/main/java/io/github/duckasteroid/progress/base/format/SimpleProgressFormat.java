@@ -13,9 +13,9 @@ public class SimpleProgressFormat implements ProgressFormat {
 	public static final ProgressFormat DEFAULT = createSimpleProgressFormat(true, true, true, true, true, true);
 
 	/** include a <code>&gt;</code> separated list of parents */
-	private final boolean showParents;
+	private transient final boolean showParents;
 
-	private final ProgressFormat format;
+	private transient final ProgressFormat format; //NOPMD
 	
 	private SimpleProgressFormat(boolean showParents, ProgressFormat format) {
 		this.showParents = showParents;

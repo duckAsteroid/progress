@@ -18,23 +18,23 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	/** Default size of a progress monitor if {@link #setSize(long)} is not called */
 	private static final long DEFAULT_SIZE = 1;
 	/** The identity of this monitor (unique in the scope of it's parent) */
-	protected final int id;
+	protected final transient int id;
 	/** the next ID for a sub task */
-	protected AtomicInteger childId = new AtomicInteger(0);
+	protected transient AtomicInteger childId = new AtomicInteger(0);
 	/** a collection of the active children of this monitor */
-	protected CopyOnWriteArrayList<AbstractProgressMonitor> children = new CopyOnWriteArrayList<>();
+	protected transient CopyOnWriteArrayList<AbstractProgressMonitor> children = new CopyOnWriteArrayList<>();
 	/** The current task name */
 	protected final String taskName;
 	/** The last set value of {@link #setStatus(String)} */
 	protected String status = "";
 	/** The amount of work currently done */
-	protected AtomicLong workDone = new AtomicLong(0);
+	protected transient AtomicLong workDone = new AtomicLong(0);
 	/** The size of this monitor in work units, the total work */
 	protected AtomicLong size = new AtomicLong(DEFAULT_SIZE);
 	/** The unit of work in this monitor (default empty) */
 	protected String unit = "";
 	/** flag to indicate the work is done - a {@link #latchDone() latched} value used to ensure we only log our total work once to the parent */
-	protected final AtomicBoolean done = new AtomicBoolean(false);
+	protected final AtomicBoolean done = new AtomicBoolean(false); // NOPMD - name clash with done() is ok
 
 	public AbstractProgressMonitor(final int id, final String name) {
 		this.id = id;
@@ -50,11 +50,11 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
      	// negative integer, zero, or a positive integer as this object is
 		// less than, equal to, or greater than the specified object.
 		// our parent is always less than us...
-		if (getParent() == o) {
+		if (Objects.equals(getParent(), o)) {
 			return Integer.MIN_VALUE;
 		}
 		// siblings (same parent) are sorted by ID
-		if (getParent() == o.getParent() && o instanceof AbstractProgressMonitor) {
+		if (Objects.equals(getParent(), o.getParent()) && o instanceof AbstractProgressMonitor) {
 			return this.id - ((AbstractProgressMonitor)o).id;
 		}
 		// otherwise always more than
@@ -64,8 +64,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || ! (o instanceof AbstractProgressMonitor)) return false;
-		AbstractProgressMonitor that = (AbstractProgressMonitor) o;
+		if (!(o instanceof AbstractProgressMonitor)) return false;
+		AbstractProgressMonitor that = (AbstractProgressMonitor) o; // NOPMD - we are not creating this resource
 		return id == that.id &&
 				Objects.equals(getParent(), that.getParent());
 	}
@@ -126,6 +126,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	}
 
 	@Override
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	public long worked(long amount, String status) {
 		amount = Math.max(0, amount); // min 0
 		long size;
@@ -147,7 +148,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 		}
 
 		updateWork(targetWorked, size, done);
-		// return the newly updated amount of workdone (NOTE: it may have changed again by now)
+		// return the newly updated amount of work done (NOTE: it may have changed again by now)
 		return targetWorked;
 	}
 
@@ -160,10 +161,10 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	public void done() {
 		if (!isDone()) {
 			long targetWorked;
-			boolean set = false;
+			boolean set;
 			boolean done;
 			do {
-				done = this.done.get();
+				done = this.done.get(); // NOPMD
 				long worked = workDone.get();
 				targetWorked = size.get();
 				set = workDone.compareAndSet(worked, targetWorked);
@@ -177,7 +178,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	/**
 	 * Called whenever the work or size (or both) have changed -
 	 * keeps done up-to-date
-	 * handles notificiations (logUpdate)
+	 * handles notifications (logUpdate)
 	 * @param work the work to log
 	 * @param size the size to log
 	 * @param done the "done" state when this update was made
@@ -195,7 +196,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	}
 
 	/**
-	 * Called when a method percieves the monitor is now done
+	 * Called when a method perceives the monitor is now done
 	 * used to latch the done state and fire one DONE event, and give subclasses a chance to "tidy up"
 	 */
 	private void latchDone() {
@@ -248,7 +249,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 	protected void appendActive(List<ProgressMonitor> active) {
 		if (!isDone()) {
 			active.add(this);
-			for (AbstractProgressMonitor child : children) {
+			for (AbstractProgressMonitor child : children) { // NOPMD - we do not create the resources
 				child.appendActive(active);
 			}
 		}

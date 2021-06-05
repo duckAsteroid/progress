@@ -6,16 +6,16 @@ description = 'An example console (System.out) application'
 
 repositories {
     maven {
-        name = "GitHubPackages"
-        url = "https://github-registry-files.githubusercontent.com/24542784/8b1c5580-bd2d-11eb-8af3-54dffb30fc75?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210526%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210526T101437Z&X-Amz-Expires=300&X-Amz-Signature=6022a6ee00199a640625f23c7eec0c3125e1c2fabeb7c246150cb71f19a7dc6b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=24542784&response-content-disposition=filename%3Dapi-1.2.0-RC%C2%A3.jar&response-content-type=application%2Foctet-stream"
+        name = "Staging"
+        url = "https://s01.oss.sonatype.org/content/groups/staging/"
     }
 }
 
 dependencies {
-    implementation "com.asteroid.duck.progress:api:1.2+"
-    implementation "com.asteroid.duck.progress:client:1.2+"
-    implementation "com.asteroid.duck.progress:format:1.2+"
-    implementation "com.asteroid.duck.progress:console:1.2+"
+    implementation "io.github.duckasteroid.progress:api:1.2.0-SNAPSHOT"
+    implementation "io.github.duckasteroid.progress:client:1.2.0-SNAPSHOT"
+    implementation "io.github.duckasteroid.progress:format:1.2.0-SNAPSHOT"
+    implementation "io.github.duckasteroid.progress:console:1.2.0-SNAPSHOT"
 }
 
 application {

@@ -7,10 +7,11 @@ import io.github.duckasteroid.progress.ProgressMonitor;
  * NOTE: This string changes every time the format is output regardless of the monitor
  */
 public class Spinner implements FormatElement {
+    private static final int MIN_SPIN_CHARS = 2;
     /** index for spinner updates */
-    private int spindex = 0;
+    private transient int spindex = 0;
     /** a sequence of characters for the spinner - looped over */
-    private final char[] spinnerChars;
+    private transient final char[] spinnerChars;
 
     /** A char pattern that does a really boring spinner with slash chars */
     public static final char[] SPINNER_SLASHES = new char[]{ '-', '\\', '|', '/'};
@@ -18,7 +19,7 @@ public class Spinner implements FormatElement {
     public Spinner(char[] spinnerChars) {
         if (spinnerChars == null)
             throw new IllegalArgumentException("Spinner chars cannot be null");
-        if (spinnerChars.length < 2)
+        if (spinnerChars.length < MIN_SPIN_CHARS)
             throw new IllegalArgumentException("Spinner chars length must be 2 or more");
 
         this.spinnerChars = spinnerChars;

@@ -12,8 +12,8 @@ import java.io.InputStream;
  * When the stream is {@link #close() closed} the monitor is marked done
  */
 public class InputStreamProgress extends InputStream {
-    private final InputStream delegate;
-    private final ProgressMonitor monitor;
+    private transient final InputStream delegate;
+    private transient final ProgressMonitor monitor;
 
     public InputStreamProgress(InputStream delegate, ProgressMonitor monitor) {
         this.delegate = delegate;

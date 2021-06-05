@@ -3,8 +3,8 @@ package io.github.duckasteroid.progress.utils;
 import io.github.duckasteroid.progress.ProgressMonitor;
 
 public class CloseableProgress implements AutoCloseable {
-    private final AutoCloseable delegate;
-    private final ProgressMonitor monitor;
+    private transient final AutoCloseable delegate;
+    private transient final ProgressMonitor monitor;
 
     public CloseableProgress(AutoCloseable delegate, ProgressMonitor monitor) {
         this.delegate = delegate;

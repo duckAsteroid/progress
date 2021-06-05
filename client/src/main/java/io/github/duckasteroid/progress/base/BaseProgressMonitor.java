@@ -23,7 +23,7 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 	protected AtomicBoolean cancelled = new AtomicBoolean(false);
 
 	/** A set of listeners */
-	protected final List<ProgressMonitorListener> listeners = new CopyOnWriteArrayList<>();
+	protected transient final List<ProgressMonitorListener> listeners = new CopyOnWriteArrayList<>();
 
 	public BaseProgressMonitor() {
 		this("");
@@ -58,6 +58,7 @@ public final class BaseProgressMonitor extends AbstractProgressMonitor implement
 	}
 
 	@Override
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	public void notifyListeners(final ProgressMonitor source, final ProgressUpdateType updateType) {
 		final ProgressMonitorEvent event = new ProgressMonitorEvent(this, source, updateType);
 		// iterate the listeners (if any)

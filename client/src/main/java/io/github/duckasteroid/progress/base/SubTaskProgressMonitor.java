@@ -19,7 +19,7 @@ public class SubTaskProgressMonitor extends AbstractProgressMonitor {
 	/** parent (supplied in constructor) */
 	protected final AbstractProgressMonitor parent;
 	/** The amount of work that this monitor contributes to it's parent when done */
-	protected final long totalParentWork;
+	protected transient final long totalParentWork;
 
 	/**
 	 * Create a sub task for a given parent monitor

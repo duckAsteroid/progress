@@ -9,7 +9,7 @@ import java.util.function.Function;
  * statically configured monitoring
  */
 public class Configuration {
-    private final Properties source;
+    private final transient Properties source;
     private final static Configuration singleton = load();
 
     private static Configuration load() {

@@ -15,11 +15,11 @@ import java.util.Optional;
  */
 public class Slf4JProgress implements ProgressMonitorListener {
     /** The logger to report to */
-    private final Logger logger;
+    private transient final Logger logger; // NOPMD - this is not OUR logger
     /** The format of the logged progress */
-    private final ProgressFormat format;
+    private transient final ProgressFormat format;
     /** A level to report to the logger for each event */
-    private final Map<ProgressUpdateType, Level> levels;
+    private transient final Map<ProgressUpdateType, Level> levels;
 
     public Slf4JProgress(final Logger logger, final ProgressFormat format, final Map<ProgressUpdateType, Level> level) {
         this.logger = logger;

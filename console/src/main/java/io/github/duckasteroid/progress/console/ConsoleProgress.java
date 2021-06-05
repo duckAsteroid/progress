@@ -24,16 +24,16 @@ public class ConsoleProgress implements ProgressMonitorListener {
 	public static final String ERASE_DOWN = "\033[J";
 
 	/** The target output stream for this */
-	private final PrintStream output;
+	private transient final PrintStream output;
 	/** Formatter to use for events */
-	private final ProgressFormat formatter;
+	private transient final ProgressFormat formatter;
 	/** Print all active monitors - or just the updated */
-	private final boolean multiline;
+	private transient final boolean multiline;
 
 	/** used to permit one thread at a time to update the console */
-	private Semaphore semaphore = new Semaphore(1, false);
+	private transient Semaphore semaphore = new Semaphore(1, false);
 	/** A cache of the console commands required to erase the last output */
-	private StringBuilder eraser = new StringBuilder();
+	private transient StringBuilder eraser = new StringBuilder();
 
 	public ConsoleProgress(PrintStream output, ProgressFormat formatter, boolean multiline) {
 		this.output = output;
@@ -73,7 +73,7 @@ public class ConsoleProgress implements ProgressMonitorListener {
 
 			// print each monitor on a new line
 			StringBuilder rewinder = new StringBuilder();
-			for (ProgressMonitor monitor : toPrint) {
+			for (ProgressMonitor monitor : toPrint) { // NOPMD
 				String formatted = formatter.format(monitor);
 				output.println(formatted);
 				// build up a series of rewind commands to return the cursor

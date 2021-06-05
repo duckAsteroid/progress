@@ -9,8 +9,8 @@ public class StaticString implements FormatElement {
     public static final StaticString CONDITIONAL_WHITESPACE = new StaticString(" ", false);
     public static final StaticString WHITESPACE = new StaticString(" ", true);
     /** should this be printed even if empty */
-    private final boolean appendWhenEmpty;
-    private final String separator;
+    private transient final boolean appendWhenEmpty;
+    private transient final String separator;
 
     public StaticString(String separator) {
         this(separator, true);

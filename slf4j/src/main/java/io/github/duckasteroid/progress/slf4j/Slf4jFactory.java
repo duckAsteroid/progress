@@ -21,18 +21,21 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
     public static final String ROOT_LOGGER_NAME = NS + "root.logger.name";
     private static final int DEFAULT_CACHE_SIZE = 100;
     public static final String CACHE_SIZE = NS + ".cacheSize";
-    public static final String FORMAT = NS + ".format";
+    public static final String FORMAT = NS + ".format"; //NOPMD - case is different
 
-    private final Map<String, ProgressMonitorListener> cache = new LruCache(getCacheSize());
+    private transient final Map<String, ProgressMonitorListener> cache = new LruCache(getCacheSize());
 
-    private final ProgressFormat format = Configuration.getInstance().getValue(FORMAT, CompoundFormat::parse, SimpleProgressFormat.DEFAULT);
+    private final ProgressFormat format = Configuration.getInstance().getValue(FORMAT, //NOPMD
+            CompoundFormat::parse, SimpleProgressFormat.DEFAULT);
 
     /**
      * A simple LRU cache based on a {@link LinkedHashMap}
      */
     private static class LruCache extends LinkedHashMap<String, ProgressMonitorListener>
     {
-        private final int cacheSize;
+        private static final long serialVersionUID = 71308712074L;
+
+        private transient final int cacheSize;
 
         public LruCache(int size) {
             super(size, 0.75f, true);
@@ -49,7 +52,7 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
      * A map that returns the same value - no matter what key
      */
     private static class SingleLevelMap implements Map<ProgressUpdateType, Slf4JProgress.Level> {
-        private final Slf4JProgress.Level value;
+        private transient final Slf4JProgress.Level value;
 
         private SingleLevelMap(Slf4JProgress.Level value) {
             this.value = value;
@@ -140,7 +143,7 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
     }
 
     public int getCacheSize() {
-        int cacheSize = DEFAULT_CACHE_SIZE;
+        int cacheSize = DEFAULT_CACHE_SIZE; //NOPMD
         try {
             String value = System.getProperty(CACHE_SIZE);
             if (value != null) {

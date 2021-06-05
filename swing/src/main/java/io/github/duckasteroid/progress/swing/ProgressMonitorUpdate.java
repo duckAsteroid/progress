@@ -9,8 +9,8 @@ import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import java.awt.*;
 
 public class ProgressMonitorUpdate implements ProgressMonitorListener {
-    private final javax.swing.ProgressMonitor swing;
-    private final BaseProgressMonitor progress;
+    private transient final javax.swing.ProgressMonitor swing;
+    private transient final BaseProgressMonitor progress;
 
     public ProgressMonitorUpdate(Component parent, String message, int totalWork) {
         this.swing = new javax.swing.ProgressMonitor(parent, message, "", 0, totalWork);

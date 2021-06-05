@@ -6,9 +6,9 @@ import io.github.duckasteroid.progress.ProgressMonitor;
  * Wraps another element in before/after strings
  */
 public class StringWrapper implements FormatElement {
-    private final String before;
-    private final String after;
-    private final FormatElement wrapped;
+    private transient final String before;
+    private transient final String after;
+    private transient final FormatElement wrapped;
 
     public StringWrapper(String before, FormatElement wrapped, String after) {
         this.before = before;
