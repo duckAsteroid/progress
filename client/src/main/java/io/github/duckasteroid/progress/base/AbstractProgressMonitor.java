@@ -30,7 +30,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
    * flag to indicate the work is done. A {@link #latchDone() latched} value used to ensure we
    * only log our total work once to the parent
    */
-  protected final AtomicBoolean done = new AtomicBoolean(false);
+  protected final AtomicBoolean done = new AtomicBoolean(false); //NOPMD
   /**
    * the next ID for a sub task.
    */
@@ -90,8 +90,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     if (!(o instanceof AbstractProgressMonitor)) {
       return false;
     }
-    AbstractProgressMonitor that =
-        (AbstractProgressMonitor) o; // NOPMD - we are not creating this resource
+    AbstractProgressMonitor that = // NOPMD - we are not creating this resource
+        (AbstractProgressMonitor) o;
     return id == that.id
         && Objects.equals(getParent(), that.getParent());
   }
