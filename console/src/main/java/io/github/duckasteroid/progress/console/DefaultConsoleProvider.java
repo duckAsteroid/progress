@@ -1,7 +1,6 @@
 package io.github.duckasteroid.progress.console;
 
 import io.github.duckasteroid.progress.Configuration;
-import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.format.CompoundFormat;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
 import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
@@ -18,25 +17,32 @@ import java.io.PrintStream;
  *     <li><pre>org.duck.asteroid.progress.console.multiline</pre>Is the output single line or
  *     multi line (boolean). Default is false</li>
  * </ul>
+ * @see java.util.ServiceLoader
  */
-public class DefaultConsoleProvider {
+public class DefaultConsoleProvider extends ConsoleProgress {
   private static final String NAMESPACE = "org.duck.asteroid.progress.console.";
 
   /**
    * Create an instance of listener for console using config.
-   * @return Instance of progress monitor listener that directs to console.
-   * @see java.util.ServiceLoader
    */
-  public static ProgressMonitorListener provide() {
-    // FIXME Read configuration for output, and format
-    Configuration cfg = Configuration.getInstance();
-    PrintStream output = cfg
-        .getValue(NAMESPACE + "output", s -> "err".equals(s) ? System.err : System.out,
+  public DefaultConsoleProvider() {
+    super(output(Configuration.getInstance()),
+        format(Configuration.getInstance()),
+        multiline(Configuration.getInstance()));
+  }
+
+  private static PrintStream output(Configuration cfg) {
+    return cfg
+      .getValue(NAMESPACE + "output", s -> "err".equals(s) ? System.err : System.out,
         System.out);
-    ProgressFormat format =
-        cfg.getValue(NAMESPACE + "format", CompoundFormat::parse,
-        SimpleProgressFormat.DEFAULT);
-    Boolean multiline = cfg.getBoolean(NAMESPACE + "multiline", false);
-    return new ConsoleProgress(output, format, multiline);
+  }
+
+  private static ProgressFormat format(Configuration cfg) {
+    return cfg.getValue(NAMESPACE + "format", CompoundFormat::parse,
+      SimpleProgressFormat.DEFAULT);
+  }
+
+  private static boolean multiline(Configuration cfg) {
+    return cfg.getBoolean(NAMESPACE + "multiline", false);
   }
 }
