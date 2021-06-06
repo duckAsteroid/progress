@@ -70,13 +70,17 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-/* Configure the publication so that all appropriate meta data ends up in the POM as required by Maven central */
+/* Configure the publication so that all appropriate meta data ends up in the POM as required by
+Maven central */
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             pom {
-                description = project.description
+                name = project.name
+                //TODO Can't resolve project.description!?
+                description = "Java progress library ${project.name}"
+
                 url = 'http://duckasteroid.github.io/progress/'
                 scm {
                     connection ='scm:git:git://github.com/duckAsteroid/progress.git'

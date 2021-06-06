@@ -2,8 +2,8 @@ plugins {
     id 'java'
     id 'duckasteroid'
 }
+
 description = 'API for progress reporting'
-// TODO pull out POM config into shared build plugin https://docs.gradle.org/current/samples/sample_convention_plugins.html
 
 dependencies {
     testImplementation(libs.junit)
