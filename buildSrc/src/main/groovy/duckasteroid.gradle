@@ -34,13 +34,15 @@ dependencies {
 
 checkstyle {
     toolVersion '8.29'
+    sourceSets = [project.sourceSets.main] // don't check tests
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
-    maxWarnings = 2000
+    maxWarnings = 0
 }
 
 // configure PMD to output failures to console
 pmd {
     consoleOutput = true
+    sourceSets = [ project.sourceSets.main ] // don't check tests
 }
 
 /* sonarqube cloud
