@@ -22,7 +22,7 @@ dependencies {
     implementation "io.github.duckasteroid.progress:client:1.2.0"
     implementation "io.github.duckasteroid.progress:format:1.2.0"
     implementation "io.github.duckasteroid.progress:console:1.2.0"
-    
+
 }
 
 application {
