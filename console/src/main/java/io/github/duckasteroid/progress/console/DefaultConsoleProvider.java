@@ -10,17 +10,17 @@ import java.io.PrintStream;
  * A service loader provider of a progress monitor listener that uses console.
  * The instance can be configured via the parameters:
  * <ul>
- *     <li><pre>org.duck.asteroid.progress.console.output</pre>Use <pre>err</pre> for System err,
+ *     <li><pre>io.github.duckasteroid.progress.console.output</pre>Use <pre>err</pre> for System err,
  *     otherwise System out (default)</li>
- *     <li><pre>org.duck.asteroid.progress.console.format</pre>Format string for
+ *     <li><pre>io.github.duckasteroid.progress.console.format</pre>Format string for
  *     {@link CompoundFormat#parse(String)}. Default is {@link SimpleProgressFormat#DEFAULT}</li>
- *     <li><pre>org.duck.asteroid.progress.console.multiline</pre>Is the output single line or
+ *     <li><pre>io.github.duckasteroid.progress.console.multiline</pre>Is the output single line or
  *     multi line (boolean). Default is false</li>
  * </ul>
  * @see java.util.ServiceLoader
  */
 public class DefaultConsoleProvider extends ConsoleProgress {
-  private static final String NAMESPACE = "org.duck.asteroid.progress.console.";
+  private static final String NAMESPACE = "io.github.duckasteroid.progress.console.";
 
   /**
    * Create an instance of listener for console using config.

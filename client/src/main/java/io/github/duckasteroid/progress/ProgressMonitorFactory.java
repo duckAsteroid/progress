@@ -15,15 +15,25 @@ import java.util.stream.Collectors;
  * {@link ServiceLoader} discovery.
  */
 public class ProgressMonitorFactory {
+  private static final long DEFAULT_SIZE = 100;
+
+  private static final String FACTORY_DEBUG =
+    "io.github.duckasteroid.progress.ProgressMonitorFactory.debug";
+  private static final boolean DEFAULT_FACTORY_DEBUG = false;
+
   private static List<ProgressMonitorListener> listeners = fromServiceLoader();
+
+
+  private static boolean debug = Configuration.getInstance().getBoolean(
+    FACTORY_DEBUG, DEFAULT_FACTORY_DEBUG);
 
   private static List<ProgressMonitorListener> fromServiceLoader() {
     ServiceLoader<ProgressMonitorListener> listenerServiceLoader =
         ServiceLoader.load(ProgressMonitorListener.class);
     List<ProgressMonitorListener> tmp =
         listenerServiceLoader.stream().map(p -> p.get()).collect(Collectors.toList());
-    if (tmp.isEmpty()) {
-      System.err.println("Bad configuration - no ProgressMonitorListeners found");
+    if (tmp.isEmpty() && debug) {
+      System.err.println("WARN: No ProgressMonitorListeners found via SPI");
     }
     return new CopyOnWriteArrayList<>(tmp);
   }
@@ -57,5 +67,13 @@ public class ProgressMonitorFactory {
         .map(fac -> fac.createProgressMonitorListener(name))
         .forEach(monitor::addProgressMonitorListener);
     return monitor;
+  }
+  /**
+   * Create a new progress monitor using system wide settings and a default size (100).
+   * @param name the name of the monitor
+   * @return the new monitor (never null)
+   */
+  public static final ProgressMonitor newMonitor(String name) {
+    return newMonitor(name, DEFAULT_SIZE);
   }
 }

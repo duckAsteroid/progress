@@ -1,0 +1,21 @@
+<configuration>
+    <appender name="test" class="io.github.duckasteroid.progress.slf4j.TestLogger"/>
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="OFF">
+        <appender-ref ref="test"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="io.github.duckasteroid.progress.slf4j.Slf4JProgressTest" level="TRACE"/>
+    <logger name="io.github.duckasteroid.progress.ProgressMonitor.capture" level="DEBUG"/>
+    <logger name="io.github.duckasteroid.progress.slf4j.Slf4JProgressTest.trace" level="TRACE"/>
+    <logger name="io.github.duckasteroid.progress.slf4j.Slf4JProgressTest.info" level="INFO"/>
+</configuration>

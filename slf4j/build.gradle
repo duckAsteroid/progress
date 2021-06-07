@@ -8,4 +8,12 @@ dependencies {
     implementation project(':client')
     implementation project(':format')
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
+    // logback classic is used to capture events in tests
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+
+    testImplementation(libs.junit)
+    // Mockito
+    testImplementation(libs.mockito)
 }

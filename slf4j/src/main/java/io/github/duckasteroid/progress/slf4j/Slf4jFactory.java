@@ -2,25 +2,38 @@ package io.github.duckasteroid.progress.slf4j;
 
 import io.github.duckasteroid.progress.Configuration;
 import io.github.duckasteroid.progress.ProgressMonitor;
+import io.github.duckasteroid.progress.base.BaseProgressMonitor;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListener;
 import io.github.duckasteroid.progress.base.event.ProgressMonitorListenerFactory;
 import io.github.duckasteroid.progress.base.event.ProgressUpdateType;
 import io.github.duckasteroid.progress.base.format.CompoundFormat;
 import io.github.duckasteroid.progress.base.format.ProgressFormat;
 import io.github.duckasteroid.progress.base.format.SimpleProgressFormat;
-import java.util.Collection;
+import io.github.duckasteroid.progress.slf4j.util.LruCache;
+import io.github.duckasteroid.progress.slf4j.util.SingleLevelMap;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Factory for monitors that route updates to SLF4J logger instances.
+ * The factory uses the following configuration parameters:
+ * <ul>
+ *   <li><pre>io.github.duckasteroid.progress.slf4j.root.logger.name</pre>The name of the root SLF4J
+ *   logger used to receive messages when monitor name begins with <pre>#</pre>. Default is
+ *   <pre>io.github.duckasteroid.progress.ProgressMonitor</pre></li>
+ *   <li><pre>io.github.duckasteroid.progress.slf4j.cacheSize</pre>. How may instances of listeners
+ *   to cache (rather than re-create when requested). Default 100.</li>
+ *   <li><pre>io.github.duckasteroid.progress.slf4j.format</pre>A format string that is parsed to
+ *   create a {@link ProgressFormat} instance used to format monitor updates being sent to loggers.
+ *   Default is {@link SimpleProgressFormat#DEFAULT}</li>
+ * </ul>
+ */
 public class Slf4jFactory implements ProgressMonitorListenerFactory {
   private static final Logger LOG = LoggerFactory.getLogger(Slf4jFactory.class);
 
-  private static final String NS = "org.duck.asteroid.progress.slf4j.";
+  private static final String NS = "io.github.duckasteroid.progress.slf4j.";
   public static final String ROOT_LOGGER_NAME = NS + "root.logger.name";
   public static final String CACHE_SIZE = NS + ".cacheSize";
   public static final String FORMAT = NS + ".format"; //NOPMD - case is different
@@ -35,7 +48,12 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
   }
 
   public Logger logger(String name) {
-    return LoggerFactory.getLogger(getRootLoggerName() + "." + name);
+    if (name.startsWith("#")) {
+      return LoggerFactory.getLogger(getRootLoggerName() + "." + name.substring(1));
+    }
+    else {
+      return LoggerFactory.getLogger(name);
+    }
   }
 
   /**
@@ -78,107 +96,38 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
   }
 
   /**
-   * A simple LRU cache based on a {@link LinkedHashMap}.
+   * Used to create a new progress monitor instance that will log directly to an SLF4J logger.
+   * @param logger the logger to write events to
+   * @param levels a map of the levels for each event type
+   * @param format a format to use for log messages
+   * @param name the name of the monitor
+   * @param size the initial size of the monitor
+   * @return a new monitor instance
    */
-  private static class LruCache extends LinkedHashMap<String, ProgressMonitorListener> {
-    private static final long serialVersionUID = 71308712074L;
-
-    private final transient int cacheSize;
-
-    public LruCache(int size) {
-      super(size, 0.75f, true);
-      this.cacheSize = size;
-    }
-
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<String, ProgressMonitorListener> eldest) {
-      return size() >= cacheSize;
-    }
+  public static ProgressMonitor newMonitorLoggingTo(Logger logger,
+                                             Map<ProgressUpdateType, Slf4JProgress.Level> levels,
+                                             ProgressFormat format,
+                                             String name, long size) {
+    BaseProgressMonitor monitor = new BaseProgressMonitor(name, size,
+      Collections.singleton(new Slf4JProgress(logger, format, levels)));
+    return monitor;
   }
 
-  /**
-   * A map that returns the same value - no matter what key.
-   */
-  private static class SingleLevelMap implements Map<ProgressUpdateType, Slf4JProgress.Level> {
-    private final transient Slf4JProgress.Level value;
+  public static ProgressMonitor newMonitorLoggingTo(Logger logger,
+                                             Slf4JProgress.Level level,
+                                             ProgressFormat format,
+                                             String name, long size) {
+    return newMonitorLoggingTo(logger, new SingleLevelMap(level), format, name, size);
+  }
 
-    private SingleLevelMap(Slf4JProgress.Level value) {
-      this.value = value;
-    }
+  public static ProgressMonitor newMonitorLoggingTo(Logger logger,
+                                             Slf4JProgress.Level level,
+                                             String name, long size) {
+    return newMonitorLoggingTo(logger, level, SimpleProgressFormat.DEFAULT, name, size);
+  }
 
-    @Override
-    public int size() {
-      return ProgressUpdateType.values().length;
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return false;
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-      return key != null && key instanceof ProgressUpdateType;
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-      return this.value.equals(value);
-    }
-
-    @Override
-    public Slf4JProgress.Level get(Object key) {
-      return value;
-    }
-
-    @Override
-    public Slf4JProgress.Level put(ProgressUpdateType key, Slf4JProgress.Level value) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Slf4JProgress.Level remove(Object key) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void putAll(Map<? extends ProgressUpdateType, ? extends Slf4JProgress.Level> m) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void clear() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Set<ProgressUpdateType> keySet() {
-      return Set.of(ProgressUpdateType.values());
-    }
-
-    @Override
-    public Collection<Slf4JProgress.Level> values() {
-      return Collections.singleton(value);
-    }
-
-    @Override
-    public Set<Entry<ProgressUpdateType, Slf4JProgress.Level>> entrySet() {
-      return keySet().stream().map(k -> new Entry<ProgressUpdateType, Slf4JProgress.Level>() {
-        @Override
-        public ProgressUpdateType getKey() {
-          return k;
-        }
-
-        @Override
-        public Slf4JProgress.Level getValue() {
-          return value;
-        }
-
-        @Override
-        public Slf4JProgress.Level setValue(Slf4JProgress.Level value) {
-          throw new UnsupportedOperationException();
-        }
-      }).collect(Collectors.toSet());
-    }
+  public static ProgressMonitor newMonitorLoggingDebugTo(Logger logger,
+                                             String name, long size) {
+    return newMonitorLoggingTo(logger, Slf4JProgress.Level.DEBUG, SimpleProgressFormat.DEFAULT, name, size);
   }
 }

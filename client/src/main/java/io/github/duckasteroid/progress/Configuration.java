@@ -29,6 +29,14 @@ public class Configuration {
     return Optional.ofNullable(source.getProperty(prop));
   }
 
+  public boolean hasValueFor(String name) {
+    return getStringValue(name).isPresent();
+  }
+
+  public <T> T getValue(String name, Function<String, T> parser, T defaultValue) {
+    return getStringValue(name).map(parser::apply).orElse(defaultValue);
+  }
+
   public Integer getInteger(String name, Integer defaultValue) {
     return getValue(name, Integer::parseInt, defaultValue);
   }
@@ -45,11 +53,4 @@ public class Configuration {
     return getValue(name, Function.identity(), defaultValue);
   }
 
-  public boolean hasValueFor(String name) {
-    return getStringValue(name).isPresent();
-  }
-
-  public <T> T getValue(String name, Function<String, T> parser, T defaultValue) {
-    return getStringValue(name).map(parser::apply).orElse(defaultValue);
-  }
 }
