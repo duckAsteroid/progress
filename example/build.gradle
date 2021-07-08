@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'application'
 }
 
@@ -9,6 +10,7 @@ repositories {
         name = "Staging"
         url = "https://s01.oss.sonatype.org/content/groups/staging/"
     }
+    mavenLocal()
 }
 
 dependencies {
@@ -18,13 +20,13 @@ dependencies {
     implementation project(':format')
     runtimeOnly project(':console')
      */
-    implementation "io.github.duckasteroid.progress:api:1.2.0"
-    implementation "io.github.duckasteroid.progress:client:1.2.0"
-    implementation "io.github.duckasteroid.progress:format:1.2.0"
-    implementation "io.github.duckasteroid.progress:console:1.2.0"
+    implementation "io.github.duckasteroid.progress:api:1.2.1"
+    implementation "io.github.duckasteroid.progress:client:1.2.1"
+    implementation "io.github.duckasteroid.progress:format:1.2.1"
+    implementation "io.github.duckasteroid.progress:console:1.2.1"
 
 }
 
 application {
-    mainClassName = 'org.duck.asteroid.progress.console.ConsoleExample'
+    mainClassName = 'org.duck.asteroid.progress.console.CustomConsoleExample'
 }
