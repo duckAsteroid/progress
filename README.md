@@ -22,6 +22,8 @@ public void someMethod(ProgressMonitor monitor) {
       // do something sensible that takes time
       Thread.sleep(1000);
       monitor.worked(10);
+      // Note we might also check if the monitor is cancelled?
+      // if(monitor.isCancelled()) { break; }
     }
   }
   catch(InterruptedException e) {
@@ -41,22 +43,19 @@ Whats most important is that this brings no other dependencies into the client c
 Getting Started
 ===============
 
-To use the library you need to add my Maven repository at `https://dl.bintray.com/duck-asteroid/maven` to your build.
-
-In Gradle you would add the following:
-```groovy
-repositories {
-    maven {
-        url = 'https://dl.bintray.com/duck-asteroid/maven'
-        name = 'github::duckAsteroid'
-        description = 'Repo for DuckAsteroids libraries'
-    }
-}
-```
-
-Then you would add the dependency for the pure API as follows:
+To use the library to report on progress (regardless of where it reports to) you need to add the 
+dependency for the pure API as follows:
 ```groovy
 dependencies {
     implementation 'com.asteroid.duck.progress:api:1.1.0'
 }
 ```
+
+Applications that wish to render that progress would need to use one of the bindings for different
+destinations:
+* Console/terminal output (e.g. `System.out`)
+* SLF4J Loggers messages in some form
+* Java Logging framework  
+* Swing progress reporting
+
+More will be added in future.
