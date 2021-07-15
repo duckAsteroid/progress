@@ -21,6 +21,9 @@ public class InputStreamProgress extends InputStream {
 
   @Override
   public int read() throws IOException {
+    if (monitor.isCancelled()) {
+      throw new IOException("Read operation cancelled by monitor");
+    }
     monitor.worked(1);
     return delegate.read();
   }
