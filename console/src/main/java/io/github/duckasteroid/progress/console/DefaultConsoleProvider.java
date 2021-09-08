@@ -10,8 +10,8 @@ import java.io.PrintStream;
  * A service loader provider of a progress monitor listener that uses console.
  * The instance can be configured via the parameters:
  * <ul>
- *     <li><pre>io.github.duckasteroid.progress.console.output</pre>Use <pre>err</pre> for System err,
- *     otherwise System out (default)</li>
+ *     <li><pre>io.github.duckasteroid.progress.console.output</pre>Use <pre>err</pre> for System
+ *     err, otherwise System out (default)</li>
  *     <li><pre>io.github.duckasteroid.progress.console.format</pre>Format string for
  *     {@link CompoundFormat#parse(String)}. Default is {@link SimpleProgressFormat#DEFAULT}</li>
  *     <li><pre>io.github.duckasteroid.progress.console.multiline</pre>Is the output single line or
