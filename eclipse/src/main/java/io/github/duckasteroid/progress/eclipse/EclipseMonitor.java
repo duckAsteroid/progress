@@ -9,11 +9,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
 public class EclipseMonitor implements ProgressMonitor {
-  private final ProgressMonitor parent;
-  private final SubMonitor monitor;
+  private final ProgressMonitor parent; //NOPMD
+  private final SubMonitor monitor; //NOPMD
   private long size = 0;
-  private AtomicLong workDone = new AtomicLong(0L);
-  private String taskName = "";
+  private AtomicLong workDone = new AtomicLong(0L); //NOPMD
+  private String taskName = ""; //NOPMD
   private String status = "";
   private String unit = "";
 
@@ -34,7 +34,7 @@ public class EclipseMonitor implements ProgressMonitor {
   @Override
   public List<ProgressMonitor> getContext() {
     ArrayList<ProgressMonitor> result = new ArrayList<>();
-    ProgressMonitor pm = this;
+    ProgressMonitor pm = this; // NOPMD
     do {
       result.add(pm);
       pm = pm.getParent();

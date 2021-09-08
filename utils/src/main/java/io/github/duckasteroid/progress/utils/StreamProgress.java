@@ -19,7 +19,8 @@ public class StreamProgress {
    * @return A stream that will report progress when read from.
    */
   public static <T> Stream<T> wrapWithProgress(Stream<T> stream, ProgressMonitor monitor) {
-    SpliteratorProgress<T> spliterator = new SpliteratorProgress<>(stream.spliterator(), monitor);
+    SpliteratorProgress<T> spliterator = new SpliteratorProgress<>( //NOPMD
+        stream.spliterator(), monitor);
     boolean parallel =
         (spliterator.characteristics() & Spliterator.CONCURRENT) == Spliterator.CONCURRENT;
     return StreamSupport.stream(spliterator, parallel);
