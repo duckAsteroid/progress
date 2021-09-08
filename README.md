@@ -1,6 +1,6 @@
 progress
 ========
-[![Java CI with Gradle](https://github.com/duckAsteroid/progress/actions/workflows/gradle.yml/badge.svg)](https://github.com/duckAsteroid/progress/actions/workflows/gradle.yml)
+[![Java CI with Gradle](https://github.com/duckAsteroid/progress/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/duckAsteroid/progress/actions/workflows/gradle.yml)
 [![Known Vulnerabilities](https://snyk.io//test/github/duckAsteroid/progress/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/duckAsteroid/progress?targetFile=build.gradle)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.asteroid.duck.progress%3Aprogress&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.asteroid.duck.progress%3Aprogress)
 
