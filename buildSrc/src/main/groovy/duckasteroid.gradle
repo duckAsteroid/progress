@@ -32,6 +32,7 @@ dependencies {
     checkstyleConfig("com.puppycrawl.tools:checkstyle:8.29") { transitive = false }
 }
 
+// setup checkstyle
 checkstyle {
     toolVersion '8.29'
     sourceSets = [project.sourceSets.main] // don't check tests
@@ -46,6 +47,7 @@ pmd {
 }
 
 /* sonarqube cloud
+// TODO Re-instate sonarqube
 //apply plugin: 'org.sonarqube'
 sonarqube {
     properties {
@@ -54,44 +56,43 @@ sonarqube {
 }
 */
 
-/* Add ability to publish JARs to Maven Central */
+// Maven central requires javadoc and source JARs
 java {
     withJavadocJar()
     withSourcesJar()
 }
 
+// HTML5 javadocs
 javadoc {
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
-
+// add the source and javadoc JARs to the artifact list
 artifacts {
     archives javadocJar, sourcesJar
 }
 
-/* Configure the publication so that all appropriate meta data ends up in the POM as required by
-Maven central */
+// Configure the publication so that all appropriate meta data ends up in the POM
+// as required by Maven central
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             pom {
                 name = project.name
-                //TODO Can't resolve project.description!?
-                description = "Java progress library ${project.name}"
-
-                url = 'http://duckasteroid.github.io/progress/'
-                scm {
-                    connection ='scm:git:git://github.com/duckAsteroid/progress.git'
-                    developerConnection ='scm:git:ssh://github.com:duckAsteroid/progress.git'
-                    url ='https://github.com/duckAsteroid/progress/tree/master'
-                }
+                //description = "Project ${getProject().path}"
+                url = "http://duckasteroid.github.io/${rootProject.name}/"
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
                         url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/duckAsteroid/${rootProject.name}.git"
+                    developerConnection = "scm:git:ssh://github.com:duckAsteroid/${rootProject.name}.git"
+                    url ="https://github.com/duckAsteroid/${rootProject.name}/tree/master"
                 }
                 developers {
                     developer {
@@ -103,13 +104,15 @@ publishing {
             }
         }
     }
+    // add the Maven OSSRH repositories
     repositories {
         maven {
             name = 'OSSRH'
-            // change URLs to point to your repos, e.g. http://my.org/repo
+            // Release and snapshots have different URLs
             def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
             def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            // use project properties to pick up user/pass for repo
             credentials {
                 username = project.hasProperty('ossrhUsername') ?  ossrhUsername : "undefined"
                 password = project.hasProperty('ossrhPassword') ?  ossrhPassword : "undefined"
@@ -118,6 +121,7 @@ publishing {
     }
 }
 
+// All JARs published to Maven central must be signed
 signing {
     sign publishing.publications.mavenJava
 }

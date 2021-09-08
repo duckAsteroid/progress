@@ -1,0 +1,10 @@
+plugins {
+    id 'duckasteroid'
+}
+description = 'An Eclipse IProgressMonitor implementation of progress reporting'
+
+dependencies {
+    implementation project(':api')
+    // Eclipse core runtime
+    implementation 'org.eclipse.core:runtime:3.2.0-v20060603'
+}

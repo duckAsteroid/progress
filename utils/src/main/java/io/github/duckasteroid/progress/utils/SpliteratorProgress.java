@@ -42,10 +42,10 @@ public class SpliteratorProgress<T> implements Spliterator<T>, AutoCloseable {
 
   private void removeThis() {
     openChildSpliterators.remove(this);
+    // only closes the progressbar if no spliterator is working anymore
     if (openChildSpliterators.size() == 0) {
       close();
     }
-    // only closes the progressbar if no spliterator is working anymore
   }
 
   @Override

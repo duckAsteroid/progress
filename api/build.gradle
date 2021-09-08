@@ -4,6 +4,15 @@ plugins {
 }
 
 description = 'API for progress reporting'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                description = project.description;
+            }
+        }
+    }
+}
 
 dependencies {
     testImplementation(libs.junit)
