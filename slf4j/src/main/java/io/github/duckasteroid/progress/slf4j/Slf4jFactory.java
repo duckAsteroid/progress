@@ -47,11 +47,16 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
     return System.getProperty(ROOT_LOGGER_NAME, ProgressMonitor.class.getName());
   }
 
+  /**
+   * Access a SLF4J logger instance by name. If the name starts with # then it is appended
+   * to the root logger namespace (without the leading #)
+   * @param name The name of the logger
+   * @return the logger instance
+   */
   public Logger logger(String name) {
     if (name.startsWith("#")) {
       return LoggerFactory.getLogger(getRootLoggerName() + "." + name.substring(1));
-    }
-    else {
+    } else {
       return LoggerFactory.getLogger(name);
     }
   }
@@ -109,10 +114,19 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
                                              ProgressFormat format,
                                              String name, long size) {
     BaseProgressMonitor monitor = new BaseProgressMonitor(name, size,
-      Collections.singleton(new Slf4JProgress(logger, format, levels)));
+        Collections.singleton(new Slf4JProgress(logger, format, levels)));
     return monitor;
   }
 
+  /**
+   * Creates a new progress monitor instance wrapping the given SLF4J logger.
+   * @param logger the slf4j logger
+   * @param level the SLF4J log level used for all progress events
+   * @param format a format to use for log messages
+   * @param name the name of the monitor
+   * @param size the initial size of the monitor
+   * @return a new monitor instance
+   */
   public static ProgressMonitor newMonitorLoggingTo(Logger logger,
                                              Slf4JProgress.Level level,
                                              ProgressFormat format,
@@ -120,14 +134,33 @@ public class Slf4jFactory implements ProgressMonitorListenerFactory {
     return newMonitorLoggingTo(logger, new SingleLevelMap(level), format, name, size);
   }
 
+  /**
+   * Creates a new progress monitor instance wrapping the given SLF4J logger. Uses DEFAULT format.
+   * @param logger the slf4j logger
+   * @param level the SLF4J log level used for all progress events
+   * @param name the name of the monitor
+   * @param size the initial size of the monitor
+   * @return a new monitor instance
+   */
   public static ProgressMonitor newMonitorLoggingTo(Logger logger,
                                              Slf4JProgress.Level level,
                                              String name, long size) {
     return newMonitorLoggingTo(logger, level, SimpleProgressFormat.DEFAULT, name, size);
   }
 
+  /**
+   * Creates a new progress monitor instance wrapping the given SLF4J logger. Uses DEFAULT format.
+   * And DEBUG level for messages.
+   * @param logger the slf4j logger
+   * @param name the name of the monitor
+   * @param size the initial size of the monitor
+   * @return a new monitor instance
+   */
   public static ProgressMonitor newMonitorLoggingDebugTo(Logger logger,
                                              String name, long size) {
-    return newMonitorLoggingTo(logger, Slf4JProgress.Level.DEBUG, SimpleProgressFormat.DEFAULT, name, size);
+    return newMonitorLoggingTo(logger,
+        Slf4JProgress.Level.DEBUG,
+        SimpleProgressFormat.DEFAULT,
+        name, size);
   }
 }

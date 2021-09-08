@@ -29,17 +29,17 @@ public class CustomConsoleExample {
    */
   public static void main(String[] args) {
     ProgressFormat format = new CompoundFormat(new FormatElement[] {
-      new Colourizer(Colourizer.Color.GREEN.getCode(),
-        StringWrapper.wrap("[", new ProgressBar(10, new char[]{'C', '<', 'o'}), "]")),
-      StaticString.WHITESPACE,
-      new Colourizer(Colourizer.Color.YELLOW.getCode(),
-        new Spinner(Spinner.SPINNER_SLASHES)),
-      StaticString.WHITESPACE,
-      new Fraction(),
-      StaticString.WHITESPACE,
-      new TaskName(),
-      StaticString.WHITESPACE,
-      StringWrapper.prefix("- ", new Status())
+        new Colourizer(Colourizer.Color.GREEN.getCode(),
+          StringWrapper.wrap("[", new ProgressBar(10, new char[]{'C', '<', 'o'}), "]")),
+        StaticString.WHITESPACE,
+        new Colourizer(Colourizer.Color.YELLOW.getCode(),
+          new Spinner(Spinner.SPINNER_SLASHES)),
+        StaticString.WHITESPACE,
+        new Fraction(),
+        StaticString.WHITESPACE,
+        new TaskName(),
+        StaticString.WHITESPACE,
+        StringWrapper.prefix("- ", new Status())
     });
     // obtain a monitor instance
     ProgressMonitor monitor = ConsoleProgress.createConsoleMonitor(format, false);
