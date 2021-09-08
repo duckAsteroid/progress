@@ -18,14 +18,14 @@ public class ProgressMonitorFactory {
   private static final long DEFAULT_SIZE = 100;
 
   private static final String FACTORY_DEBUG =
-    "io.github.duckasteroid.progress.ProgressMonitorFactory.debug";
+      "io.github.duckasteroid.progress.ProgressMonitorFactory.debug";
   private static final boolean DEFAULT_FACTORY_DEBUG = false;
 
   private static List<ProgressMonitorListener> listeners = fromServiceLoader();
 
 
   private static boolean debug = Configuration.getInstance().getBoolean(
-    FACTORY_DEBUG, DEFAULT_FACTORY_DEBUG);
+      FACTORY_DEBUG, DEFAULT_FACTORY_DEBUG);
 
   private static List<ProgressMonitorListener> fromServiceLoader() {
     ServiceLoader<ProgressMonitorListener> listenerServiceLoader =
@@ -68,6 +68,7 @@ public class ProgressMonitorFactory {
         .forEach(monitor::addProgressMonitorListener);
     return monitor;
   }
+
   /**
    * Create a new progress monitor using system wide settings and a default size (100).
    * @param name the name of the monitor
