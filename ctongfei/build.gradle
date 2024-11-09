@@ -3,5 +3,5 @@ plugins {
 }
 description = 'A wrapper onto http://tongfei.me/progressbar/'
 dependencies {
-    implementation 'me.tongfei:progressbar:0.9.0'
+    implementation 'me.tongfei:progressbar:0.10.1'
 }
