@@ -15,7 +15,7 @@ enableFeaturePreview('VERSION_CATALOGS')
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
-            alias('junit').to('junit:junit:4.12')
+            alias('junit').to('junit:junit:4.13.2')
             alias('mockito').to('org.mockito:mockito-all:1.10.19')
         }
     }
